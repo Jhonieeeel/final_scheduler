@@ -14,8 +14,10 @@ type FormProps = {
 export default function AccumulateButton({ user, date }: FormProps) {
     const queryClient = useQueryClient();
 
-    const starts_at = format(startOfMonth(date), 'yyyy-MM-dd');
-    const ends_at = format(startOfMonth(date), 'yyyy-MM-dd');
+    const baseDate = addMonths(date, 1);
+
+    const starts_at = format(startOfMonth(baseDate), 'yyyy-MM-dd');
+    const ends_at = format(startOfMonth(baseDate), 'yyyy-MM-dd');
 
     const accrualForm = useForm({
         user_id: user.id,
@@ -29,6 +31,8 @@ export default function AccumulateButton({ user, date }: FormProps) {
 
     function handleSubmit(e: React.MouseEvent) {
         e.preventDefault();
+
+        console.log(accrualForm.data);
         accrualForm.submit(balance.store(), {
             onSuccess: () =>
                 queryClient.invalidateQueries({

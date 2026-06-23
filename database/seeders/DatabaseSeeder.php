@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Leave;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -50,5 +51,36 @@ class DatabaseSeeder extends Seeder
             'starts_at' => '2023-01-01',
             'ends_at' => '2023-01-31'
         ]);
+
+        // $accrualPerMonth = 1.25;
+
+        // $types = ['vacation leave', 'sick leave'];
+
+        // $date = Carbon::create(2023, 1, 1);
+
+        // for ($month = 2; $month <= 12; $month++) {
+
+        //     $date = $date->copy()->addMonthNoOverflow();
+
+        //     Leave::create([
+        //         'user_id'    => 1,
+        //         'leave_type' => 'force leave',
+        //         'event_type' => 'accrual',
+        //         'event_tag'  => null,
+        //         'balance'    => 1.25,
+        //         'starts_at'  => $date->copy()->startOfMonth(),
+        //         'ends_at'    => $date->copy()->endOfMonth(),
+        //     ]);
+
+        //     Leave::create([
+        //         'user_id'    => 1,
+        //         'leave_type' => 'sick leave',
+        //         'event_type' => 'accrual',
+        //         'event_tag'  => null,
+        //         'balance'    => 1.25,
+        //         'starts_at'  => $date->copy()->startOfMonth(),
+        //         'ends_at'    => $date->copy()->endOfMonth(),
+        //     ]);
+        // }
     }
 }

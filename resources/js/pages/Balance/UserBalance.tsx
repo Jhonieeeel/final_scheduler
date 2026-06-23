@@ -11,6 +11,16 @@ import { fetchBalances } from './data/fetchData';
 
 type PageProps = { user: User };
 
+type BalanceResponse = {
+    date?: string;
+    balances: {
+        leave_type: string;
+        previousBalance: number;
+        usedBalance: number;
+        estimatedBalance: number;
+    };
+};
+
 export default function UserBalance() {
     const { user } = usePage<PageProps>().props;
 
@@ -22,12 +32,15 @@ export default function UserBalance() {
 
     const filteredMonth = format(currentDate, 'yyyy-MM-dd');
 
-    const { data: balances, isLoading } = useQuery({
+    const { data: balances, isLoading } = useQuery<BalanceResponse>({
         queryKey: ['balances', user.id, month, year],
         queryFn: () => fetchBalances(month, year, user.id),
     });
 
-    const filteredDate = balances?.date;
+    console.log(balances);
+
+    const balanceItems = balances?.balances ?? [];
+    const filteredDate = balances?.date ?? null;
 
     return (
         <>
@@ -58,14 +71,14 @@ export default function UserBalance() {
                                 onMonthChange={setMonth}
                                 onYearChange={setYear}
                             />
-                            {balances?.date && (
-                                <AccumulateButton
-                                    key={balances?.date}
-                                    user={user}
-                                    date={filteredDate}
-                                />
-                            )}
                         </div>
+                        {filteredDate && (
+                            <AccumulateButton
+                                key={filteredDate}
+                                user={user}
+                                date={filteredDate}
+                            />
+                        )}
                     </div>
                 </div>
 
@@ -75,7 +88,7 @@ export default function UserBalance() {
                     </div>
                 ) : (
                     <div className="relative grid grid-cols-3 gap-4 rounded-xl">
-                        {balances.balances?.map((bal, index) => (
+                        {balanceItems.map((bal, index) => (
                             <BalanceCard data={bal} key={index} />
                         ))}
                     </div>

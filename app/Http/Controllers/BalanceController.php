@@ -53,14 +53,13 @@ class BalanceController extends Controller
     {
         $month = request()->input('month', now()->month);
         $year  = request()->input('year', now()->year);
-        $date = Carbon::create((int) $year, (int) $month, 1);
+        $date  = Carbon::create((int) $year, (int) $month, 1)->startOfMonth();
+
         $balances = Leave::replayBalances($date, $user);
-
-
 
         return response()->json([
             'balances' => $balances,
-            'date' => $date->format('Y-m-d')
+            'date'     => $date->format('Y-m-d'),
         ]);
     }
 

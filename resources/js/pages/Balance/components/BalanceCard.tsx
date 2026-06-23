@@ -1,9 +1,9 @@
 import {
-    CalendarDays,
-    Wallet,
-    TrendingDown,
-    Stethoscope,
     AlertTriangle,
+    CalendarDays,
+    Stethoscope,
+    TrendingDown,
+    Wallet,
 } from 'lucide-react';
 
 type LeaveCardProps = {
@@ -66,7 +66,7 @@ export default function BalanceCard({ data }: LeaveCardProps) {
                     {data.currentBalance.toFixed(3)}
                 </p>
                 <p className="mb-4 text-xs text-muted-foreground">
-                    Available balance
+                    Current balance
                 </p>
 
                 <div className="space-y-2">
