@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Leave\FileLeave;
+use App\Data\LeaveData;
 use App\Models\Leave;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,7 +16,7 @@ class LeaveController extends Controller
      */
     public function index()
     {
-        return Inertia::render("Leave/LeaveIndex", ['users' => User::select(['id','name'])->get()]);
+        return Inertia::render("Leave/LeaveIndex", ['users' => User::select(['id', 'name'])->get()]);
     }
 
     /**
@@ -28,9 +30,11 @@ class LeaveController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(LeaveData $data, FileLeave $fileLeave)
     {
-        //
+        $fileLeave($data);
+
+        return to_route('leave.index')->with('message', 'Leave filed successfully');
     }
 
     /**

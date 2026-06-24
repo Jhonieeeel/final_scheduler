@@ -28,6 +28,7 @@ import { useForm, usePage } from '@inertiajs/react';
 import {
     addHours,
     addMinutes,
+    differenceInMinutes,
     format,
     isValid,
     parse,
@@ -43,9 +44,10 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { HOURS_TABLE, MINUTES_TABLE } from './constant/Conversion';
+import undertime from '@/routes/undertime';
 
 type UndertimeFormProp = {
-    user_id: number;
+    user_id: number | string;
     leave_type: string;
     event_type: string;
     event_tag?: string;
@@ -63,13 +65,10 @@ export default function UndertimeForm() {
 
     const { users } = usePage<PageProps>().props;
 
-    const [time, setTime] = useState({
-        hours: 0,
-        minutes: 0,
-    });
+    const [time, setTime] = useState('08:00:00');
 
     const form = useForm<UndertimeFormProp>({
-        user_id: 0,
+        user_id: '',
         leave_type: 'vacation leave',
         event_type: 'deduction',
         event_tag: '',
@@ -81,23 +80,43 @@ export default function UndertimeForm() {
     function handleSubmit(e) {
         e.preventDefault();
 
-        const convertedHours = HOURS_TABLE[time.hours] ?? 0;
-        const convertedMinutes = MINUTES_TABLE[time.minutes] ?? 0;
+        const formattedStart = form.data.starts_at
+            ? `${form.data.starts_at} 08:00:00`
+            : '';
 
-        const startDate = parseISO(`${form.data.starts_at}T08:00:00`);
-        const endDate = addMinutes(
-            addHours(startDate, convertedHours),
-            convertedMinutes,
+        const formattedEnd = form.data.ends_at
+            ? `${form.data.ends_at} ${time}`
+            : '';
+
+        const totalMinutes = differenceInMinutes(
+            new Date(formattedEnd),
+            new Date(formattedStart),
         );
 
-        const newForm = {
-            ...form.data,
-            balance: convertedHours + convertedMinutes,
-            starts_at: format(startDate, 'yyyy-MM-dd HH:mm:ss'),
-            ends_at: format(endDate, 'yyyy-MM-dd HH:mm:ss'),
-        };
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
 
-        form.setData(newForm);
+        const convertedHours = HOURS_TABLE[hours] ?? 0;
+        const convertedMinutes = MINUTES_TABLE[minutes] ?? 0;
+
+        const totalUndertime = Number(
+            (convertedHours + convertedMinutes).toFixed(3),
+        );
+
+        form.setData({
+            ...form.data,
+            balance: -totalUndertime,
+            starts_at: formattedStart,
+            ends_at: formattedEnd,
+        });
+
+        form.submit(undertime.store(), {
+            onSuccess: () => {
+                form.reset();
+
+                setTime('08:00:00');
+            },
+        });
     }
     return (
         <>
@@ -138,7 +157,7 @@ export default function UndertimeForm() {
                                         users.find(
                                             (user) =>
                                                 user.id === form.data.user_id,
-                                        )?.name
+                                        )?.name ?? ''
                                     }
                                     placeholder="Select an employee"
                                 />
@@ -252,63 +271,19 @@ export default function UndertimeForm() {
                                 </PopoverContent>
                             </Popover>
 
-                            {/* Hours */}
-                            <div className="flex items-end gap-2">
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-xs text-muted-foreground">
-                                        Hours
-                                    </span>
-                                    <Input
-                                        type="number"
-                                        min={0}
-                                        max={23}
-                                        className="w-20"
-                                        value={time.hours}
-                                        placeholder="HH"
-                                        onChange={(e) => {
-                                            let hours = Number(e.target.value);
-
-                                            setTime((prev) => ({
-                                                ...prev,
-                                                hours,
-                                            }));
-                                        }}
-                                    />
-                                </div>
-
-                                <span className="pb-2 text-muted-foreground">
-                                    :
-                                </span>
-
-                                {/* Minutes */}
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-xs text-muted-foreground">
-                                        Minutes
-                                    </span>
-                                    <Input
-                                        type="number"
-                                        min={0}
-                                        max={59}
-                                        className="w-20"
-                                        value={time.minutes}
-                                        placeholder="MM"
-                                        onChange={(e) => {
-                                            let minutes = Number(
-                                                e.target.value,
-                                            );
-
-                                            setTime((prev) => ({
-                                                ...prev,
-                                                minutes,
-                                            }));
-                                        }}
-                                    />
-                                </div>
-
-                                <div className="ml-3 text-sm text-muted-foreground">
-                                    = {form.data.balance ?? 0} min
-                                </div>
-                            </div>
+                            <Field className="w-32">
+                                <FieldLabel htmlFor="time-picker-optional">
+                                    Time
+                                </FieldLabel>
+                                <Input
+                                    type="time"
+                                    id="time-picker-optional"
+                                    onChange={(e) => setTime(e.target.value)}
+                                    value={time}
+                                    step="1"
+                                    className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                                />
+                            </Field>
                         </div>
                     </FieldGroup>
 

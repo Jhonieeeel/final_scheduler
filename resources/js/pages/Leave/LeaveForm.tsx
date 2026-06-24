@@ -22,12 +22,13 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 import { Spinner } from '@/components/ui/spinner';
+import leave from '@/routes/leave';
 import { User } from '@/types';
 import { Form, Head, useForm, usePage } from '@inertiajs/react';
 
 // date
 
-import { format, isValid, parse } from 'date-fns';
+import { differenceInDays, format, isValid, parse } from 'date-fns';
 import { CalendarIcon, InfoIcon } from 'lucide-react';
 import React, { EventHandler, useState } from 'react';
 
@@ -74,7 +75,20 @@ export default function LeaveForm() {
     });
 
     function handleSubmit(e: React.SubmitEvent) {
+        const days =
+            differenceInDays(form.data.ends_at, form.data.starts_at) + 1;
+
+        form.setData({
+            ...form.data,
+            balance: -days,
+        });
+
         e.preventDefault();
+        form.submit(leave.store(), {
+            onSuccess: () => {
+                form.reset();
+            },
+        });
     }
 
     return (
@@ -130,12 +144,20 @@ export default function LeaveForm() {
                             <FieldLabel>Leave Type</FieldLabel>
                             <Combobox
                                 items={event_types}
-                                onValueChange={(val) =>
+                                onValueChange={(val) => {
                                     form.setData(
                                         'leave_type',
                                         String(val).toLowerCase(),
+                                    );
+                                    if (
+                                        String(val).toLowerCase() ===
+                                        'force leave'
                                     )
-                                }
+                                        form.setData(
+                                            'event_tag',
+                                            'vacation leave',
+                                        );
+                                }}
                             >
                                 <ComboboxInput
                                     disabled={!form.data.user_id}

@@ -17,7 +17,7 @@ export default function AccumulateButton({ user, date }: FormProps) {
     const baseDate = addMonths(date, 1);
 
     const starts_at = format(startOfMonth(baseDate), 'yyyy-MM-dd');
-    const ends_at = format(startOfMonth(baseDate), 'yyyy-MM-dd');
+    const ends_at = format(endOfMonth(baseDate), 'yyyy-MM-dd');
 
     const accrualForm = useForm({
         user_id: user.id,

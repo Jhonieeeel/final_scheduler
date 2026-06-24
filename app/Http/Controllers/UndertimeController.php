@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Undertime\FileUndertime;
+use App\Data\LeaveData;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -29,9 +31,11 @@ class UndertimeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(LeaveData $data, FileUndertime $fileUndertime)
     {
-        //
+        $fileUndertime($data);
+
+        return to_route('undertime.index')->with('message', 'Undertime filed Successfully');
     }
 
     /**

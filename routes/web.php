@@ -12,6 +12,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Leave
     Route::get("leave", [LeaveController::class, 'index'])->name('leave.index');
+    Route::post("leave", [LeaveController::class, 'store'])->name('leave.store');
+
 
     // Balance
     Route::get("balance", [BalanceController::class, "index"])->name('balance.index');
@@ -21,6 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Undertimen
     Route::get("undertime", [UndertimeController::class, 'index'])->name('undertime.index');
+    Route::post("undertime", [UndertimeController::class, 'store'])->name('undertime.store');
 });
 
 require __DIR__ . '/settings.php';

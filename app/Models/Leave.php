@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Data\LeaveData;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -25,14 +26,16 @@ class Leave extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function scopeFromUser(Builder $query, User $user): Builder
-    {
-        return $query->where('user_id', $user->id);
-    }
-
-    public function scopeUpToDate(Builder $query, Carbon $date): Builder
-    {
-        return $query->where('starts_at', '<=', $date->copy()->endOfMonth());
+    public static function checkBalance(
+        Carbon $date,
+        User $user,
+        string $leaveType
+    ): float {
+        return self::query()
+            ->fromUser($user)
+            ->upToDate($date)
+            ->where('leave_type', $leaveType)
+            ->sum('balance');
     }
 
     public static function forceLeaveRule(Collection $forceLeaveEvents, array $balances, Carbon $date): array
@@ -50,16 +53,21 @@ class Leave extends Model
         foreach ($flAccrualYears as $year) {
 
             $flUsedThatYear = $forceLeaveEvents
-                ->where('event_type', 'deduct')
+                ->where('event_type', 'deduction')
                 ->filter(fn($e) => Carbon::parse($e->starts_at)->year === $year)
                 ->sum('balance');
 
-            $flUnused = max(0, $fixedFL + $flUsedThatYear);
+            $flUnused = max(0, $fixedFL - abs($flUsedThatYear));
+
 
             foreach ($balances as &$balance) {
+                info($balance);
+                info($balance['currentBalance'] -= $flUnused);
                 if ($balance['leave_type'] === 'vacation leave') {
-                    $balance['currentBalance']   -= $flUnused;
-                    $balance['estimatedBalance'] -= $flUnused;
+                    $balance['currentBalance'] -= $flUnused;
+                    $balance['estimatedBalance'] = $balance['currentBalance'] + 1.25;
+
+                    info("LeaveType: {$balance['leave_type']} Estim: {$balance['estimatedBalance']}");
                 }
             }
         }
@@ -90,24 +98,54 @@ class Leave extends Model
             $current  = $currentEvents->get($type, collect());
             $previous = $prevEvents->get($type, collect());
 
-            $currentBalance = $current->sum('balance');
+            $taggedAsVLCurrent  = $currentEvents->get('force leave', collect())
+                ->where('event_tag', 'vacation leave');
+
+            $taggedAsVLPrevious = $prevEvents->get('force leave', collect())
+                ->where('event_tag', 'vacation leave');
+
+            $currentBalance  = $type === 'vacation leave'
+                ? $current->sum('balance') + $taggedAsVLCurrent->sum('balance')
+                : $current->sum('balance');
+
+            $previousBalance = $previous->sum('balance');
+
+            if ($type === 'vacation leave') {
+                $previousBalance += $taggedAsVLPrevious->sum('balance') + 1.25;
+            }
+
+            if ($type === 'sick leave') {
+                $previousBalance += 1.25;
+            }
 
             return [
-                'leave_type'      => $type,
-                'currentBalance'  => $currentBalance,
-                'usedBalance'     => abs($current->where('balance', '<', 0)->sum('balance')),
+                'leave_type'       => $type,
+                'previousBalance'  => $previousBalance,
+                'currentBalance'   => $currentBalance,
+                'usedBalance'      => abs($current->where('event_tag', null)->where('balance', '<', 0)->sum('balance')),
                 'estimatedBalance' => in_array($type, ['vacation leave', 'sick leave'])
                     ? $currentBalance + 1.25
                     : null,
             ];
         })->toArray();
 
-        $balances = self::forceLeaveRule(
+        $newBalances = self::forceLeaveRule(
             $currentEvents->get('force leave', collect()),
             $balances,
             $date
         );
 
-        return $balances;
+
+        return $newBalances;
+    }
+
+    public function scopeFromUser(Builder $query, User $user): Builder
+    {
+        return $query->where('user_id', $user->id);
+    }
+
+    public function scopeUpToDate(Builder $query, Carbon $date): Builder
+    {
+        return $query->where('starts_at', '<=', $date->copy()->endOfMonth());
     }
 }

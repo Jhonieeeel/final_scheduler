@@ -9,6 +9,7 @@ import {
 type LeaveCardProps = {
     data: {
         leave_type: string;
+        previousBalance: number;
         currentBalance: number;
         usedBalance: number;
         estimatedBalance: number | null;
@@ -70,6 +71,15 @@ export default function BalanceCard({ data }: LeaveCardProps) {
                 </p>
 
                 <div className="space-y-2">
+                    {' '}
+                    <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                            <Wallet className="size-4" /> Previous
+                        </div>
+                        <span className="font-medium">
+                            {data.previousBalance.toFixed(3)}
+                        </span>
+                    </div>
                     <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-2 text-muted-foreground">
                             <Wallet className="size-4" /> Current
@@ -78,7 +88,6 @@ export default function BalanceCard({ data }: LeaveCardProps) {
                             {data.currentBalance.toFixed(3)}
                         </span>
                     </div>
-
                     <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-2 text-muted-foreground">
                             <TrendingDown className="size-4" /> Used
