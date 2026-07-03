@@ -67,7 +67,12 @@ export const BalanceColumns: ColumnDef<BalanceProps>[] = [
         cell: ({ row }) => {
             const leaveType = row.original.leave_type;
             const eventTag = row.original.event_tag;
-            const label = eventTag || leaveType;
+
+            const isAttendanceTag =
+                eventTag === 'tardiness' || eventTag === 'undertime';
+
+            const label = isAttendanceTag ? eventTag : leaveType;
+
             const Icon = getLeaveIcon(leaveType, eventTag);
 
             return (

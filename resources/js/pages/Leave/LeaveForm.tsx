@@ -68,7 +68,7 @@ export default function LeaveForm() {
         user_id: 0,
         leave_type: '',
         event_type: 'deduction',
-        event_tag: '',
+        event_tag: 'leave',
         starts_at: '',
         ends_at: '',
         balance: 0,

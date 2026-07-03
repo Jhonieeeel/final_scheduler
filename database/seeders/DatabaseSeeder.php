@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
             'event_tag' => null,
             'balance' => 5,
             'starts_at' => '2023-01-01',
-            'ends_at' => '2023-01-31'
+            'ends_at' => '2023-12-31'
         ]);
 
         // $accrualPerMonth = 1.25;

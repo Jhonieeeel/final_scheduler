@@ -47,8 +47,10 @@ class Leave extends Model
 
     public static function calendarData()
     {
-        return self::query()->with("user:id,name")->where('event_type', 'deduction')
-            ->whereNotIn('event_tag', ['tardiness', 'undertime'])
+        return self::query()
+            ->with("user:id,name")
+            ->where('event_type', 'deduction')
+            ->whereIn('event_tag', ['leave', 'vacation leave'])
             ->select([
                 'id',
                 'user_id',
@@ -59,15 +61,14 @@ class Leave extends Model
             ->get()
             ->map(function ($leave) {
                 return [
-                    'id'      => (string) $leave->id,
-                    'user_id' => $leave->user_id,
-                    'title'   => $leave->user->name, // title: UserName
-                    'start'   => Carbon::parse($leave->starts_at)->format('Y-m-d'),
-                    'end'     => Carbon::parse($leave->ends_at)->format('Y-m-d'),
-                    'status'  => $leave->status,
-                    'user'    => $leave->user,
-                    'calendarTitle' => $leave->leave_type, // Force leave
-                    'calendarId' => $leave->leave_type // Force Leave
+                    'id'            => (string) $leave->id,
+                    'user_id'       => $leave->user_id,
+                    'title'         => $leave->user->name,
+                    'start'         => Carbon::parse($leave->starts_at)->format('Y-m-d'),
+                    'end'           => Carbon::parse($leave->ends_at)->format('Y-m-d'),
+                    'user'          => $leave->user,
+                    'calendarTitle' => $leave->leave_type,
+                    'calendarId'    => $leave->leave_type,
                 ];
             });
     }
@@ -119,6 +120,7 @@ class Leave extends Model
             $result = array_map(function ($balance) use ($flUnused) {
                 if ($balance['leave_type'] === 'vacation leave') {
                     $balance['currentBalance']  -= $flUnused;
+                    $balance['previousBalance'] -= $flUnused;
                     $balance['estimatedBalance'] = $balance['currentBalance'] + 1.25;
                 }
                 return $balance;
