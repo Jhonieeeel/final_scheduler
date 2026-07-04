@@ -185,7 +185,7 @@ class Leave extends Model
                         ->filter(fn($e) => Carbon::parse($e->starts_at)->month === $date->month
                             && Carbon::parse($e->starts_at)->year  === $date->year)
                         ->sum('balance'))
-                    : abs($current->where('event_tag', null)
+                    : abs($current->where('event_tag', 'leave')
                         ->where('balance', '<', 0)
                         ->filter(fn($e) => Carbon::parse($e->starts_at)->month === $date->month
                             && Carbon::parse($e->starts_at)->year  === $date->year)

@@ -44,7 +44,6 @@ export default function BalanceCard({ data }: LeaveCardProps) {
             {/* accent bar */}
             <div className={`h-1 w-full ${config.accent}`} />
 
-            {/* header */}
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground capitalize">
                     {config.icon}
@@ -61,7 +60,6 @@ export default function BalanceCard({ data }: LeaveCardProps) {
                 )}
             </div>
 
-            {/* body */}
             <div className="p-4">
                 <p
                     className={`text-3xl font-medium ${isForceLeave ? 'text-slate-500' : 'text-sky-600'}`}

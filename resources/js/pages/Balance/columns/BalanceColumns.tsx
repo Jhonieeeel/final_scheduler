@@ -75,8 +75,15 @@ export const BalanceColumns: ColumnDef<BalanceProps>[] = [
 
             const Icon = getLeaveIcon(leaveType, eventTag);
 
+            const badgeColorClass =
+                eventTag === 'undertime'
+                    ? 'bg-amber-100 text-amber-700 border-amber-200'
+                    : 'bg-red-100 text-red-700 border-red-200';
+
             return (
-                <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-2.5 py-1 text-xs font-medium text-gray-600 capitalize">
+                <div
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium capitalize ${badgeColorClass}`}
+                >
                     <Icon size={13} aria-hidden="true" />
                     {label}
                 </div>
