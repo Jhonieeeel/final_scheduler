@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Balance\MonthlyAccrual;
+use App\Actions\Balance\ReplayBalanceAction;
 use App\Data\LeaveData;
 use App\Models\Leave;
 use App\Models\User;
@@ -49,13 +50,13 @@ class BalanceController extends Controller
         return Inertia::render("Balance/UserBalance", ['user' => $user, 'date' => Carbon::create($year, $month)]);
     }
 
-    public function data(User $user)
+    public function data(User $user, ReplayBalanceAction $action)
     {
         $month = request()->input('month', now()->month);
         $year  = request()->input('year', now()->year);
         $date  = Carbon::create((int) $year, (int) $month, 1)->startOfMonth();
 
-        $replayBalances = Leave::replayBalances($date, $user);
+        $replayBalances = $action->replayUserBalance($date, $user);
         $hasNextAccrual = Leave::hasNextMonthAccrual($user, $date);
         $transactions   = Leave::transactionPerMonth($user, $date);
 
@@ -65,6 +66,22 @@ class BalanceController extends Controller
             'hasNext'  => $hasNextAccrual,
             'transactions' => $transactions
         ]);
+    }
+
+    public function exportFile(ReplayBalanceAction $action)
+    {
+        $month = request()->input('month', now()->month);
+        $year  = request()->input('year', now()->year);
+
+        $date  = Carbon::create((int) $year, (int) $month, 1)->startOfMonth();
+
+        info("Date" . $date);
+
+        $users = User::select(['id'])->get();
+
+        $balances = $action->replayUsersBalance($date, $users);
+
+        return response()->json($balances);
     }
 
     /**

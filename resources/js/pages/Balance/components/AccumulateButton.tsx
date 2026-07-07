@@ -32,7 +32,6 @@ export default function AccumulateButton({ user, date }: FormProps) {
     function handleSubmit(e: React.MouseEvent) {
         e.preventDefault();
 
-        console.log(accrualForm.data);
         accrualForm.submit(balance.store(), {
             onSuccess: () =>
                 queryClient.invalidateQueries({

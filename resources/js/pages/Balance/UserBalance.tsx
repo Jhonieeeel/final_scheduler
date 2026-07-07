@@ -11,6 +11,8 @@ import BalanceCard from './components/BalanceCard';
 import FilterButton from './components/FilterButton';
 import { fetchBalances } from './data/fetchData';
 import { BalanceIndexTable } from './table/BalanceIndexTable';
+import { Button } from '@base-ui/react';
+import GenerateButton from './components/GenerateButton';
 
 type PageProps = { user: User };
 
@@ -44,7 +46,6 @@ export default function UserBalance() {
     const filteredDate = balances?.date ?? null;
     const hasNextAccrual = balances?.hasNext;
 
-    console.log(balances?.transactions);
     return (
         <>
             <Head title="Balance" />
@@ -81,6 +82,7 @@ export default function UserBalance() {
                                 onMonthChange={setMonth}
                                 onYearChange={setYear}
                             />
+                            <GenerateButton month={month} year={year} />
                         </div>
                     </div>
                 </div>
