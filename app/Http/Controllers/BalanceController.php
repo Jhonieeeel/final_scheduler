@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Balance\MonthlyAccrual;
 use App\Actions\Balance\ReplayBalanceAction;
+use App\Actions\Excel\ExportFile;
 use App\Data\LeaveData;
 use App\Models\Leave;
 use App\Models\User;
@@ -68,20 +69,21 @@ class BalanceController extends Controller
         ]);
     }
 
-    public function exportFile(ReplayBalanceAction $action)
+    public function exportFile(ReplayBalanceAction $action, ExportFile $exportAction)
     {
         $month = request()->input('month', now()->month);
         $year  = request()->input('year', now()->year);
 
         $date  = Carbon::create((int) $year, (int) $month, 1)->startOfMonth();
 
-        info("Date" . $date);
 
-        $users = User::select(['id'])->get();
+        $users = User::select(['id', 'name'])->get();
 
-        $balances = $action->replayUsersBalance($date, $users);
+        $replayUsersBalance = $action->replayUsersBalance($date, $users);
 
-        return response()->json($balances);
+        $exportAction->writeExcel($replayUsersBalance);
+
+        return response()->json($replayUsersBalance);
     }
 
     /**

@@ -6,12 +6,75 @@ use App\Models\Leave;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class ReplayBalanceAction
 {
 
     protected array $leaveTypes = ['vacation leave', 'sick leave', 'force leave'];
     protected int $fixedFL = 5;
+
+
+    protected function filedLeaves(Collection $leavesCollection)
+    {
+        return $leavesCollection->map(function ($leave) {
+
+            $startsAt = Carbon::parse($leave->starts_at);
+
+            $abbreviation = collect(explode(' ', $leave->leave_type))
+                ->map(fn($word) => Str::upper(Str::substr($word, 0, 1)))
+                ->implode('');
+
+            return [
+                'label' => $startsAt->format('M j') . ' - ' . $abbreviation,
+                'leave_type' => $leave->leave_type,
+                'starts_at' => $startsAt->toDateString(),
+            ];
+        })->values()->toArray();
+    }
+
+    protected function deductionEvents(Collection $currentUndertime): array
+    {
+
+        $undertimeCount = $currentUndertime->where('event_tag', 'undertime')->count();
+        $tardinessCount = $currentUndertime->where('event_tag', 'tardiness')->count();
+
+        $events =  $currentUndertime->map(function ($event) {
+
+            $startsAt = Carbon::parse($event->starts_at);
+            $endsAt   = Carbon::parse($event->ends_at);
+
+            $diffMinutes = $startsAt->diffInMinutes($endsAt);
+
+            $hours   = intdiv($diffMinutes, 60);
+            $minutes = $diffMinutes % 60;
+
+            $durationParts = [];
+            if ($hours > 0) {
+                $durationParts[] = $hours . ' ' . ($hours === 1 ? 'hr' : 'hrs');
+            }
+            if ($minutes > 0 || $hours === 0) {
+                $durationParts[] = $minutes . ' ' . ($minutes === 1 ? 'min' : 'mins');
+            }
+            $durationText = implode(' ', $durationParts);
+
+            $tag = Str::upper(Str::substr($event->event_tag, 0, 1));
+
+            return [
+                'label' => $startsAt->format('M j') . ', ' . $durationText . ' ' . $tag,
+                'minutes' => $minutes,
+                'hours' => $hours,
+                'day' => $startsAt->day,
+                'deductionAmount' => $event->balance,
+            ];
+        })->values()->toArray();
+
+        return [
+            'events' => $events,
+            'undertimeCount' => $undertimeCount,
+            'tardinessCount' => $tardinessCount
+        ];
+    }
 
     // one user
     public function replayUserBalance(Carbon $date, User $user)
@@ -66,22 +129,36 @@ class ReplayBalanceAction
 
             $balances = $this->replayBalances($currentEvents, $prevEvents, $date);
 
+            $currentUndertime = $allCurrentEvents->get($user->id, collect())
+                ->whereIn('event_tag', ['tardiness', 'undertime']);
+
+            $currentFiledLeaves = $allCurrentEvents->get($user->id, collect())
+                ->where('event_tag', 'leave');
+
             $newBalances = $this->forceLeaveRule(
                 $currentEvents->get('force leave', collect()),
                 $balances,
                 $date
             );
 
+            $deductionData = $this->deductionEvents($currentUndertime);
+            $leavesCollection = $this->filedLeaves($currentFiledLeaves);
+
             return [
-                'name'             => $user->name,
-                'balances' => $newBalances,
-                // 'leaves'           => $leavesColumn,
+                'name'            => $user->name,
+                'balances'        => $newBalances,
+                'events'          => $deductionData['events'],
+                'undertimeCount'  => $deductionData['undertimeCount'],
+                'tardinessCount'  => $deductionData['tardinessCount'],
+                'leaves'          => $leavesCollection
             ];
         })->values()->toArray();
     }
 
     protected function replayBalances(Collection $currentEvents, Collection $previousEvents, Carbon $date)
     {
+
+
         return collect($this->leaveTypes)->map(function ($type) use ($currentEvents, $previousEvents, $date) {
 
             $current  = $currentEvents->get($type, collect());
@@ -100,6 +177,8 @@ class ReplayBalanceAction
                     ->sum('balance'),
                 default          => $current->sum('balance'),
             };
+
+            $underTime = $currentEvents->where('event_type', 'deduction')->whereIn('event_tag', ['tardiness', 'undertime']);
 
             $previousBalance = match ($type) {
                 'vacation leave' => $previous->sum('balance') + $taggedAsVLPrevious->sum('balance') + 1.25,
