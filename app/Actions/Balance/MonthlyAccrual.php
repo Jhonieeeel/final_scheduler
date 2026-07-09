@@ -12,11 +12,26 @@ class MonthlyAccrual
     {
         $this->vacationLeaveAccrual($data);
         $this->sickLeaveAccrual($data);
+        $this->monthlyAccrualStatus($data);
 
         $date = Carbon::parse($data->ends_at)->month === 1;
         if ($date) {
             $this->forceLeaveAccrual($data);
         }
+    }
+
+    public function monthlyAccrualStatus(LeaveData $data)
+    {
+        Leave::create([
+            'user_id' => $data->user_id,
+            'leave_type' => 'monthly status',
+            'event_type' => 'monthly_filing',
+            'event_tag' => 'filing',
+            'balance' => 0,
+            'starts_at' => $data->starts_at,
+            'ends_at' => $data->ends_at,
+            'status' => false
+        ]);
     }
 
     public function vacationLeaveAccrual(LeaveData $data)

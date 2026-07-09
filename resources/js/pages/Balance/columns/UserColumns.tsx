@@ -9,28 +9,69 @@ import {
 } from '@/components/ui/dropdown-menu';
 import balance from '@/routes/balance';
 import { User } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal } from 'lucide-react';
+import { Badge, MoreHorizontal } from 'lucide-react';
+import { useState } from 'react';
 
-export const UserColumns: ColumnDef<User>[] = [
+type Leave = {
+    id: number;
+    user_id: number;
+    leave_type: string;
+    event_type: string;
+    event_tag: string;
+    balance: number;
+    starts_at: string;
+    ends_at: string;
+
+    //
+    status: boolean;
+    remarks: string;
+
+    //
+    user: User;
+};
+
+export const UserColumns: ColumnDef<Leave>[] = [
     {
-        accessorKey: 'amount',
+        accessorKey: 'user.name',
         header: () => <div className="text-left">Employee Name</div>,
         cell: ({ row }) => {
-            const name = row.original.name;
+            const name = row.original.user.name;
 
             return <div className="text-left font-medium">{name}</div>;
         },
     },
     {
-        accessorKey: 'department',
-        header: 'Department',
+        accessorKey: 'status',
+        header: () => <div className="text-left">Filing Status</div>,
+        cell: ({ row }) => {
+            const status = row.original.status;
+
+            const [isFiled, setFiled] = useState(status);
+
+            const form = useForm({});
+
+            form.optimistic;
+
+            return isFiled ? (
+                <Badge variant="default">Filed</Badge>
+            ) : (
+                <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={(value) => setFiled(!value)}
+                >
+                    Mark as Filed
+                </Button>
+            );
+        },
     },
     {
         id: 'actions',
+        header: () => <div className="text-left">Action</div>,
         cell: ({ row }) => {
-            let user_id = row.original.id;
+            let user_id = row.original.user_id;
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('leaves', function (Blueprint $table) {
-            $table->index(['user_id', 'leave_type', 'event_type']);
+            $table->index(['user_id', 'leave_type', 'event_type', 'starts_at']);
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('leaves', function (Blueprint $table) {
-            $table->dropIndex(['user_id', 'leave_type', 'event_type']);
+            $table->dropIndex(['user_id', 'leave_type', 'event_type', 'starts_at']);
         });
     }
 };

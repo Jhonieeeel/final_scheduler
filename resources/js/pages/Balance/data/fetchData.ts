@@ -1,3 +1,4 @@
+import balance from '@/routes/balance';
 import { User } from '@/types';
 import axios from 'axios';
 
@@ -10,6 +11,14 @@ type EventProp = {
     end: Temporal.PlainDate;
     status: boolean;
 };
+
+export async function fetchUserStatus(month: string, year: string) {
+    const res = await axios.get(balance.filing().url, {
+        params: { month, year },
+    });
+
+    return res.data;
+}
 
 export async function fetchBalances(
     month: string,

@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
             'event_tag' => null,
             'balance' => 10.792,
             'starts_at' => '2023-01-01',
-            'ends_at' => '2023-01-31'
+            'ends_at' => '2023-01-31',
         ]);
         Leave::create([
             'user_id' => 1,
@@ -49,38 +49,18 @@ class DatabaseSeeder extends Seeder
             'event_tag' => null,
             'balance' => 5,
             'starts_at' => '2023-01-01',
-            'ends_at' => '2023-12-31'
+            'ends_at' => '2023-12-31',
         ]);
-
-        // $accrualPerMonth = 1.25;
-
-        // $types = ['vacation leave', 'sick leave'];
-
-        // $date = Carbon::create(2023, 1, 1);
-
-        // for ($month = 2; $month <= 12; $month++) {
-
-        //     $date = $date->copy()->addMonthNoOverflow();
-
-        //     Leave::create([
-        //         'user_id'    => 1,
-        //         'leave_type' => 'force leave',
-        //         'event_type' => 'accrual',
-        //         'event_tag'  => null,
-        //         'balance'    => 1.25,
-        //         'starts_at'  => $date->copy()->startOfMonth(),
-        //         'ends_at'    => $date->copy()->endOfMonth(),
-        //     ]);
-
-        //     Leave::create([
-        //         'user_id'    => 1,
-        //         'leave_type' => 'sick leave',
-        //         'event_type' => 'accrual',
-        //         'event_tag'  => null,
-        //         'balance'    => 1.25,
-        //         'starts_at'  => $date->copy()->startOfMonth(),
-        //         'ends_at'    => $date->copy()->endOfMonth(),
-        //     ]);
-        // }
+        Leave::create([
+            'user_id' => 1,
+            'leave_type' => 'monthly leave',
+            'event_type' => 'monthly_filing',
+            'event_tag'  => 'filing',
+            'balance' => 0,
+            'starts_at' => '2023-01-01',
+            'ends_at'   => '2023-01-31',
+            'status'    => false,
+            'remarks' => ''
+        ]);
     }
 }

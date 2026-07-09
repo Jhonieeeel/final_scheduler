@@ -17,9 +17,11 @@ return new class extends Migration
             $table->string('leave_type');
             $table->string('event_type');
             $table->string('event_tag')->nullable();
-            $table->decimal('balance', 10, 3);
+            $table->decimal('balance', 10, 3)->default(0);
             $table->datetime('starts_at');
             $table->datetime('ends_at');
+            $table->boolean('status')->default(false);
+            $table->text('remarks')->nullable();
             $table->timestamps();
         });
     }

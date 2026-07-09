@@ -20,12 +20,16 @@ class Leave extends Model
         'event_tag',
         'balance',
         'starts_at',
-        'ends_at'
+        'ends_at',
+        'status',
+        'remarks'
     ];
 
     protected $casts = [
         'starts_at' => 'datetime',
-        'ends_at' => 'datetime'
+        'ends_at' => 'datetime',
+        'status' => 'boolean',
+        'balance' => 'decimal:3'
     ];
 
     public function user(): BelongsTo

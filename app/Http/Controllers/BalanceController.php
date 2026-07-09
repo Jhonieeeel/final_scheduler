@@ -19,17 +19,35 @@ class BalanceController extends Controller
      */
     public function index()
     {
+
+
         $users = User::select(['id', 'name'])->get();
+
         return Inertia::render("Balance/BalanceIndex", ['users' => $users]);
+    }
+
+    public function balanceFiling()
+    {
+        $month = request()->input('month', now()->month);
+        $year  = request()->input('year', now()->year);
+
+        $date = Carbon::create((int) $year, (int) $month, 1)->startOfMonth();
+
+        $usersStatus = Leave::with('user:id,name')
+            ->where('event_tag', 'filing')
+            ->whereBetween('starts_at', [
+                $date,
+                $date->copy()->endOfMonth()
+            ])
+            ->get();
+
+        return response()->json($usersStatus);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
