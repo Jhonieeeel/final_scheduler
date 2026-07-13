@@ -12,12 +12,16 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Filter } from 'lucide-react';
+import { Dispatch, SetStateAction } from 'react';
 
-type FilterButtonProps = {
+type Filter = {
     month: string;
     year: string;
-    onMonthChange: (val: string) => void;
-    onYearChange: (val: string) => void;
+};
+
+type UserFilterButtonProps = {
+    filter: Filter;
+    setFilter: Dispatch<SetStateAction<Filter>>;
 };
 
 const MONTHS = [
@@ -40,16 +44,14 @@ const YEARS = Array.from({ length: 5 }, (_, i) => {
     return { label: String(year), value: String(year) };
 });
 
-export default function FilterButton({
-    month,
-    year,
-    onMonthChange,
-    onYearChange,
-}: FilterButtonProps) {
-    const handleReset = () => {
-        onMonthChange(String(new Date().getMonth() + 1));
-        onYearChange(String(new Date().getFullYear()));
-    };
+export default function UserFilterButton({
+    filter,
+    setFilter,
+}: UserFilterButtonProps) {
+    function handleReset() {
+        setFilter((prev) => ({ ...prev, month: '' }));
+        setFilter((prev) => ({ ...prev, year: '' }));
+    }
 
     return (
         <div>
@@ -79,7 +81,15 @@ export default function FilterButton({
                             <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Month
                             </label>
-                            <Select value={month} onValueChange={onMonthChange}>
+                            <Select
+                                value={filter.month}
+                                onValueChange={(value) =>
+                                    setFilter((prev) => ({
+                                        ...prev,
+                                        month: value,
+                                    }))
+                                }
+                            >
                                 <SelectTrigger className="h-9 w-36">
                                     <SelectValue placeholder="Select month" />
                                 </SelectTrigger>
@@ -100,7 +110,15 @@ export default function FilterButton({
                             <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Year
                             </label>
-                            <Select value={year} onValueChange={onYearChange}>
+                            <Select
+                                value={filter.year}
+                                onValueChange={(value) =>
+                                    setFilter((prev) => ({
+                                        ...prev,
+                                        year: value,
+                                    }))
+                                }
+                            >
                                 <SelectTrigger className="h-9 w-28">
                                     <SelectValue placeholder="Select year" />
                                 </SelectTrigger>

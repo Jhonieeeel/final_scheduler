@@ -12,8 +12,20 @@ type EventProp = {
     status: boolean;
 };
 
-export async function fetchUserStatus(month: string, year: string) {
+export async function fetchUserFiling(
+    month: string,
+    year: string,
+    current_page: number,
+) {
     const res = await axios.get(balance.filing().url, {
+        params: { month: month, year: year, page: current_page },
+    });
+
+    return res.data;
+}
+
+export async function fetchUserStatus(month: string, year: string) {
+    const res = await axios.get(balance.index().url, {
         params: { month, year },
     });
 

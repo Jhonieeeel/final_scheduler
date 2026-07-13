@@ -1,30 +1,34 @@
 import balance from '@/routes/balance';
 import { User } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
-import { UserColumns } from './columns/UserColumns';
-import { BalanceIndexTable } from './table/BalanceIndexTable';
-import FilterButton from './components/FilterButton';
+import { Head, router, usePage } from '@inertiajs/react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchUserStatus } from './data/fetchData';
-import { useState } from 'react';
-
+import { useEffect, useState } from 'react';
+import { UserColumns } from './columns/UserColumns';
+import Pagination from './components/Pagination';
+import UserFilterButton from './components/UserFilterButton';
+import { fetchUserFiling, fetchUserStatus } from './data/fetchData';
+import { BalanceIndexTable } from './table/BalanceIndexTable';
 type PageProps = {
     users: User[];
+    filters: {
+        month: string;
+        year: string;
+    };
 };
 
 export default function BalanceIndex() {
-    const { users } = usePage<PageProps>().props;
-
-    const [month, setMonth] = useState(String(new Date().getMonth() + 1));
-    const [year, setYear] = useState(String(new Date().getFullYear()));
-
-    const { data: usersStatus } = useQuery({
-        queryKey: ['users', month, year],
-        queryFn: () => fetchUserStatus(month, year),
-        staleTime: 1000 * 5,
+    const [filter, setFilter] = useState({
+        month: String(new Date().getMonth() + 1),
+        year: String(new Date().getFullYear()),
+        current_page: 1,
     });
 
-    console.log(usersStatus);
+    const { data } = useQuery({
+        queryKey: ['users', filter.month, filter.year, filter.current_page],
+        queryFn: () =>
+            fetchUserFiling(filter.month, filter.year, filter.current_page),
+        staleTime: 1000 * 60,
+    });
 
     return (
         <>
@@ -42,19 +46,26 @@ export default function BalanceIndex() {
                         </p>
                     </div>
                     <div>
-                        <FilterButton
+                        {/* <FilterButton
                             month={month}
                             year={year}
                             onMonthChange={setMonth}
                             onYearChange={setYear}
+                        /> */}
+                        <UserFilterButton
+                            filter={filter}
+                            setFilter={setFilter}
                         />
                     </div>
                 </div>
                 <div className="min-h-100vh relative flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <BalanceIndexTable
-                        columns={UserColumns}
-                        data={usersStatus ?? []}
-                    />
+                    <>
+                        <BalanceIndexTable
+                            columns={UserColumns}
+                            data={data?.users?.data ?? []}
+                        />
+                        <Pagination links={data?.users?.links} />
+                    </>
                 </div>
             </div>
         </>

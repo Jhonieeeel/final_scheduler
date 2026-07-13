@@ -17,6 +17,33 @@ class UserFactory extends Factory
      */
     protected static ?string $password;
 
+
+    public static function ocdEmployees()
+    {
+        return  [
+            ['name' => 'Ray Francis Alingasa', 'email' => 'rayfrancis@ocd.com'],
+            ['name' => 'Jenn Eric Borday', 'email' => 'jenneric@ocd.com'],
+            ['name' => 'Ronald Anthony Briol', 'email' => 'ronaldanthony@ocd.com'],
+            ['name' => 'Marc Gil Calang', 'email' => 'marcgil@ocd.com'],
+            ['name' => 'Rosalie Carpizo', 'email' => 'rosalie@ocd.com'],
+            ['name' => 'Lorene Catedral', 'email' => 'lorene@ocd.com'],
+            ['name' => 'Carlito Jr. Clarete', 'email' => 'carlitojr@ocd.com'],
+            ['name' => 'Kim Durango', 'email' => 'kim@ocd.com'],
+            ['name' => 'Jayvee Gustilo', 'email' => 'jayvee@ocd.com'],
+            ['name' => 'Aizy Lyn Joloyohoy', 'email' => 'aizylyn@ocd.com'],
+            ['name' => 'Ryan Joloyohoy', 'email' => 'ryan@ocd.com'],
+            ['name' => 'Diana Lim', 'email' => 'diana@ocd.com'],
+            ['name' => 'Dave Madayag', 'email' => 'dave@ocd.com'],
+            ['name' => 'Georiss Mae Maniago', 'email' => 'georissmae@ocd.com'],
+            ['name' => 'Amado Posas', 'email' => 'amado@ocd.com'],
+            ['name' => 'April Rose Anne Sanchez-Elmedulan', 'email' => 'aprilroseanne@ocd.com'],
+            ['name' => 'Marie Lynn Tadle', 'email' => 'marielynn@ocd.com'],
+            ['name' => 'John Lenn Uayan', 'email' => 'johnlenn@ocd.com'],
+            ['name' => 'Grace Villanueva', 'email' => 'grace@ocd.com'],
+            ['name' => 'Angelic Mae Yu', 'email' => 'angelicmae@ocd.com'],
+        ];
+    }
+
     /**
      * Define the model's default state.
      *
@@ -41,7 +68,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
@@ -51,7 +78,7 @@ class UserFactory extends Factory
      */
     public function withTwoFactor(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'two_factor_secret' => encrypt('secret'),
             'two_factor_recovery_codes' => encrypt(json_encode(['recovery-code-1'])),
             'two_factor_confirmed_at' => now(),

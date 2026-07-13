@@ -32,69 +32,52 @@ type Leave = {
     user: User;
 };
 
-export const UserColumns: ColumnDef<Leave>[] = [
+type UserProp = {
+    name: string;
+    email: string;
+};
+
+export const UserColumns: ColumnDef<UserProp>[] = [
     {
-        accessorKey: 'user.name',
+        accessorKey: 'name',
         header: () => <div className="text-left">Employee Name</div>,
         cell: ({ row }) => {
-            const name = row.original.user.name;
+            const name = row.original.name;
+
+            const status = row.original.leave.status;
 
             return <div className="text-left font-medium">{name}</div>;
         },
     },
-    {
-        accessorKey: 'status',
-        header: () => <div className="text-left">Filing Status</div>,
-        cell: ({ row }) => {
-            const status = row.original.status;
 
-            const [isFiled, setFiled] = useState(status);
-
-            const form = useForm({});
-
-            form.optimistic;
-
-            return isFiled ? (
-                <Badge variant="default">Filed</Badge>
-            ) : (
-                <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={(value) => setFiled(!value)}
-                >
-                    Mark as Filed
-                </Button>
-            );
-        },
-    },
-    {
-        id: 'actions',
-        header: () => <div className="text-left">Action</div>,
-        cell: ({ row }) => {
-            let user_id = row.original.user_id;
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>
-                            <Link href={balance.show(user_id)}>
-                                View Balance
-                            </Link>
-                        </DropdownMenuItem>
-                        {/* <DropdownMenuSeparator /> */}
-                        {/* <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>
-                            View payment details
-                        </DropdownMenuItem> */}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
-        },
-    },
+    // {
+    //     id: 'actions',
+    //     header: () => <div className="text-left">Action</div>,
+    //     cell: ({ row }) => {
+    //         let user_id = row.original.user_id;
+    //         return (
+    //             <DropdownMenu>
+    //                 <DropdownMenuTrigger asChild>
+    //                     <Button variant="ghost" className="h-8 w-8 p-0">
+    //                         <span className="sr-only">Open menu</span>
+    //                         <MoreHorizontal className="h-4 w-4" />
+    //                     </Button>
+    //                 </DropdownMenuTrigger>
+    //                 <DropdownMenuContent align="end">
+    //                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+    //                     <DropdownMenuItem>
+    //                         <Link href={balance.show(user_id)}>
+    //                             View Balance
+    //                         </Link>
+    //                     </DropdownMenuItem>
+    //                     {/* <DropdownMenuSeparator /> */}
+    //                     {/* <DropdownMenuItem>View customer</DropdownMenuItem>
+    //                     <DropdownMenuItem>
+    //                         View payment details
+    //                     </DropdownMenuItem> */}
+    //                 </DropdownMenuContent>
+    //             </DropdownMenu>
+    //         );
+    //     },
+    // },
 ];

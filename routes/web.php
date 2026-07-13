@@ -24,7 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/balances/delete', [BalanceController::class, 'destroy'])->name('balance.destroy');
 
     // balance users status
-    Route::get("balance/users_filing", [BalanceController::class, 'balanceFiling'])->name('balance.filing');
+    Route::get("balance/users_filing", [BalanceController::class, 'usersFiling'])->name('balance.filing');
 
     // Undertimen
     Route::get("undertime", [UndertimeController::class, 'index'])->name('undertime.index');

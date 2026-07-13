@@ -17,31 +17,66 @@ class BalanceController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
-
-
-        $users = User::select(['id', 'name'])->get();
-
-        return Inertia::render("Balance/BalanceIndex", ['users' => $users]);
+        return Inertia::render('Balance/BalanceIndex', []);
     }
 
-    public function balanceFiling()
+    // public function index(Request $request)
+    // {
+    //     $month = $request->input('month', now()->month);
+    //     $year = $request->input('year', now()->year);
+
+    //     $startDate = Carbon::createFromDate((int) $year, (int) $month, 1)->startOfMonth();
+    //     $endDate = $startDate->copy()->endOfMonth();
+
+    //     $users = User::query()
+    //         ->with('leave')
+    //         ->whereHas('leave', function ($query) use ($startDate, $endDate) {
+    //             $query->where('status', false)
+    //                 ->whereBetween('starts_at', [$startDate, $endDate]);
+    //         })
+    //         ->paginate(5)
+    //         ->withQueryString();
+
+    //     if ($request->wantsJson()) {
+    //         return response()->json($users);
+    //     }
+
+    //     return Inertia::render("Balance/BalanceIndex", [
+    //         'users' => $users,
+    //         'filters' => [
+    //             'month' => (string) $month,
+    //             'year' => (string) $year,
+    //         ]
+    //     ]);
+    // }
+
+    public function usersFiling()
     {
         $month = request()->input('month', now()->month);
         $year  = request()->input('year', now()->year);
 
         $date = Carbon::create((int) $year, (int) $month, 1)->startOfMonth();
 
-        $usersStatus = Leave::with('user:id,name')
-            ->where('event_tag', 'filing')
-            ->whereBetween('starts_at', [
-                $date,
-                $date->copy()->endOfMonth()
-            ])
-            ->get();
+        $users = User::query()
+            ->with('leave')
+            ->whereHas('leave', function ($query) use ($date) {
+                $query->where('status', false)
+                    ->whereBetween('starts_at', [$date, $date->copy()->endOfMonth()]);
+            })
+            ->paginate(5);
 
-        return response()->json($usersStatus);
+        $data = [
+            'users' => $users,
+            'filters' => [
+                'month' => (string) $month,
+                'year' => (string) $year
+            ]
+        ];
+
+        return response()->json($data);
     }
 
     /**

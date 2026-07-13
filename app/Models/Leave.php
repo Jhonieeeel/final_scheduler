@@ -80,6 +80,7 @@ class Leave extends Model
     public static function transactionPerMonth(?User $user, Carbon $date)
     {
         return self::query()->fromUser($user)
+            ->whereNotIn('leave_type', ['monthly leave'])
             ->whereMonth('starts_at', $date->month)
             ->whereYear('starts_at', $date->year)
             ->get();
