@@ -69,7 +69,7 @@ export default function UserBalance() {
                         </div>
 
                         <div className="flex items-center gap-4">
-                            {!hasNextAccrual && (
+                            {hasNextAccrual && (
                                 <AccumulateButton
                                     key={filteredDate}
                                     user={user}

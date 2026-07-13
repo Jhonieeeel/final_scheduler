@@ -75,10 +75,16 @@ export const BalanceColumns: ColumnDef<BalanceProps>[] = [
 
             const Icon = getLeaveIcon(leaveType, eventTag);
 
-            const badgeColorClass =
-                eventTag === 'undertime'
-                    ? 'bg-amber-100 text-amber-700 border-amber-200'
-                    : 'bg-red-100 text-red-700 border-red-200';
+            let badgeColorClass;
+            if (eventTag === 'deduction') {
+                badgeColorClass = 'bg-red-100 text-red-700 border-red-200';
+            } else if (eventTag === 'accrual') {
+                badgeColorClass =
+                    'bg-green-100 text-green-700 border-green-200';
+            } else {
+                badgeColorClass =
+                    'bg-amber-100 text-amber-700 border-amber-200';
+            }
 
             return (
                 <div

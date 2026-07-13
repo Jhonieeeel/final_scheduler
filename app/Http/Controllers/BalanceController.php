@@ -18,9 +18,22 @@ class BalanceController extends Controller
      * Display a listing of the resource.
      */
 
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('Balance/BalanceIndex', []);
+        $month = $request->input('month', now()->month);
+        $year = $request->input('year', now()->year);
+
+        $date = Carbon::create((int) $year, (int) $month);
+
+        $users = Leave::query()
+            ->with('user:id,name')
+            ->select(['leave_type', 'id', 'status', 'starts_at', 'ends_at', 'user_id'])
+            ->where('leave_type', 'monthly filing')
+            ->whereBetween('starts_at', [$date->copy()->startOfMonth(), $date->copy()->endOfMonth()])
+            ->paginate(5)
+            ->withQueryString();
+
+        return Inertia::render('Balance/BalanceIndex', ['users' => $users, 'filters' => ['month' => $month, 'year'=> $year]]);
     }
 
     // public function index(Request $request)
@@ -113,6 +126,8 @@ class BalanceController extends Controller
         $replayBalances = $action->replayUserBalance($date, $user);
         $hasNextAccrual = Leave::hasNextMonthAccrual($user, $date);
         $transactions   = Leave::transactionPerMonth($user, $date);
+
+        info($hasNextAccrual);
 
         return response()->json([
             'balances' => $replayBalances,

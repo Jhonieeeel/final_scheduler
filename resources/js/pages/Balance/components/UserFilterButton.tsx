@@ -21,7 +21,7 @@ type Filter = {
 
 type UserFilterButtonProps = {
     filter: Filter;
-    setFilter: Dispatch<SetStateAction<Filter>>;
+    handleFilter: (filter: Partial<Filter>) => void;
 };
 
 const MONTHS = [
@@ -46,11 +46,11 @@ const YEARS = Array.from({ length: 5 }, (_, i) => {
 
 export default function UserFilterButton({
     filter,
-    setFilter,
+    handleFilter,
 }: UserFilterButtonProps) {
     function handleReset() {
-        setFilter((prev) => ({ ...prev, month: '' }));
-        setFilter((prev) => ({ ...prev, year: '' }));
+        handleFilter(filter.month, '');
+        handleFilter(filter.year, '');
     }
 
     return (
@@ -84,10 +84,7 @@ export default function UserFilterButton({
                             <Select
                                 value={filter.month}
                                 onValueChange={(value) =>
-                                    setFilter((prev) => ({
-                                        ...prev,
-                                        month: value,
-                                    }))
+                                    handleFilter({ month: value })
                                 }
                             >
                                 <SelectTrigger className="h-9 w-36">
@@ -113,10 +110,7 @@ export default function UserFilterButton({
                             <Select
                                 value={filter.year}
                                 onValueChange={(value) =>
-                                    setFilter((prev) => ({
-                                        ...prev,
-                                        year: value,
-                                    }))
+                                    handleFilter({ year: value })
                                 }
                             >
                                 <SelectTrigger className="h-9 w-28">

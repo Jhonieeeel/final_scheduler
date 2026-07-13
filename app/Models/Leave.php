@@ -80,7 +80,7 @@ class Leave extends Model
     public static function transactionPerMonth(?User $user, Carbon $date)
     {
         return self::query()->fromUser($user)
-            ->whereNotIn('leave_type', ['monthly leave'])
+            ->whereNotIn('leave_type', ['monthly filing'])
             ->whereMonth('starts_at', $date->month)
             ->whereYear('starts_at', $date->year)
             ->get();
@@ -89,13 +89,19 @@ class Leave extends Model
     public static function hasNextMonthAccrual(User $user, Carbon $date): bool
     {
         return self::query()
-            ->fromUser($user)
-            ->where('event_type', 'accrual')
-            ->whereBetween('starts_at', [
-                $date->copy()->addMonth()->startOfMonth(),
-                $date->copy()->addMonth()->endOfMonth(),
-            ])
+            ->where('leave_type' ,'monthly filing')
+            ->where('status', true)
+            ->whereBetween('starts_at', [$date->copy()->startOfMonth(), $date->copy()->endOfMonth()])
             ->exists();
+
+        // return self::query()
+        //     ->fromUser($user)
+        //     ->where('event_type', 'accrual')
+        //     ->whereBetween('starts_at', [
+        //         $date->copy()->addMonth()->startOfMonth(),
+        //         $date->copy()->addMonth()->endOfMonth(),
+        //     ])
+        //     ->exists();
     }
 
     public function scopeFromUser(Builder $query, User $user): Builder

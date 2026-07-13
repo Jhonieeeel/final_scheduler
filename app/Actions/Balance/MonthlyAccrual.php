@@ -24,8 +24,8 @@ class MonthlyAccrual
     {
         Leave::create([
             'user_id' => $data->user_id,
-            'leave_type' => 'monthly status',
-            'event_type' => 'monthly_filing',
+            'leave_type' => 'monthly filing',
+            'event_type' => 'filing',
             'event_tag' => 'filing',
             'balance' => 0,
             'starts_at' => $data->starts_at,

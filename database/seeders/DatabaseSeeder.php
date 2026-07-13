@@ -27,20 +27,18 @@ class DatabaseSeeder extends Seeder
 
             $balances = BalanceFactory::balances()[$index];
 
-            foreach ($balances as $balanceIndex => $balance) {
-
+            foreach ($balances as $leaveType => $balance) {
                 Leave::create([
                     'user_id' => $user->id,
-                    'leave_type' => $balanceIndex,
+                    'leave_type' => $leaveType,
                     'event_type' => 'accrual',
                     'event_tag' => 'accrual',
                     'balance' => $balance,
                     'starts_at' => '2023-01-01',
-                    'ends_at' => '2023-01-31'
+                    'ends_at' => '2023-01-31',
                 ]);
             }
 
-            // Monthly Status
             Leave::create([
                 'user_id' => $user->id,
                 'leave_type' => 'monthly filing',

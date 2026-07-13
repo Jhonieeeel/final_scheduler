@@ -1,6 +1,6 @@
 import balance from '@/routes/balance';
 import { User } from '@/types';
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { UserColumns } from './columns/UserColumns';
@@ -17,24 +17,29 @@ type PageProps = {
 };
 
 export default function BalanceIndex() {
-    const [filter, setFilter] = useState({
-        month: String(new Date().getMonth() + 1),
-        year: String(new Date().getFullYear()),
-        current_page: 1,
+    const { users, filters } = usePage<PageProps>().props;
+
+    const form = useForm({
+        month: String(filters.month) ?? String(new Date().getMonth() + 1),
+        year: String(filters.year) ?? String(new Date().getFullYear()),
     });
 
-    const { data } = useQuery({
-        queryKey: ['users', filter.month, filter.year, filter.current_page],
-        queryFn: () =>
-            fetchUserFiling(filter.month, filter.year, filter.current_page),
-        staleTime: 1000 * 60,
-    });
+    function handleFilter(
+        newFilter: Partial<{ month?: string; year?: string }>,
+    ) {
+        form.setData({ ...form.data, ...newFilter });
+
+        form.get(balance.index().url, {
+            preserveState: true,
+            replace: true,
+        });
+    }
 
     return (
         <>
             <Head title="Balance" />
             <div className="flex h-full flex-1 flex-col gap-4 space-y-2 overflow-x-auto rounded-xl md:p-14">
-                <div>
+                <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-4xl font-bold text-sky-600">
                             Balance Overview
@@ -53,8 +58,8 @@ export default function BalanceIndex() {
                             onYearChange={setYear}
                         /> */}
                         <UserFilterButton
-                            filter={filter}
-                            setFilter={setFilter}
+                            filter={form.data}
+                            handleFilter={handleFilter}
                         />
                     </div>
                 </div>
@@ -62,9 +67,9 @@ export default function BalanceIndex() {
                     <>
                         <BalanceIndexTable
                             columns={UserColumns}
-                            data={data?.users?.data ?? []}
+                            data={users?.data ?? []}
                         />
-                        <Pagination links={data?.users?.links} />
+                        <Pagination links={users?.links} />
                     </>
                 </div>
             </div>
