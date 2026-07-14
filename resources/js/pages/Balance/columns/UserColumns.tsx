@@ -4,34 +4,15 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import balance from '@/routes/balance';
-import { User } from '@/types';
-import { Link, useForm } from '@inertiajs/react';
+import { Leave } from '@/types';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Badge, MoreHorizontal } from 'lucide-react';
-import { useState } from 'react';
-
-type Leave = {
-    id: number;
-    user_id: number;
-    leave_type: string;
-    event_type: string;
-    event_tag: string;
-    balance: number;
-    starts_at: string;
-    ends_at: string;
-
-    //
-    status: boolean;
-    remarks: string;
-
-    //
-    user: User;
-};
+import { Hash, MoreHorizontal } from 'lucide-react';
+import MonthlyFilingDialog from '../components/MonthlyFilingDialog';
 
 export const UserColumns: ColumnDef<Leave>[] = [
     {
@@ -87,6 +68,8 @@ export const UserColumns: ColumnDef<Leave>[] = [
         cell: ({ row }) => {
             let user_id = row.original.user.id;
 
+            let filing = row.original;
+
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -96,17 +79,19 @@ export const UserColumns: ColumnDef<Leave>[] = [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel>View Actions</DropdownMenuLabel>
                         <DropdownMenuItem>
-                            <Link href={balance.show(user_id)}>
-                                View Balance
+                            <Link
+                                className="inline-flex w-full items-center justify-start gap-3"
+                                href={balance.show(user_id)}
+                            >
+                                <Hash />
+                                Balance
                             </Link>
                         </DropdownMenuItem>
-                        {/* <DropdownMenuSeparator /> */}
-                        {/* <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>
-                            View payment details
-                        </DropdownMenuItem> */}
+                        <DropdownMenuItem asChild>
+                            <MonthlyFilingDialog filing={filing} />
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

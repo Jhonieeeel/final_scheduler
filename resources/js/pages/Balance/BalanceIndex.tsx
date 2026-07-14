@@ -1,12 +1,11 @@
 import balance from '@/routes/balance';
 import { User } from '@/types';
-import { Head, router, useForm, usePage } from '@inertiajs/react';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { Head, useForm, usePage } from '@inertiajs/react';
+import { format } from 'date-fns';
+import { Calendar1Icon } from 'lucide-react';
 import { UserColumns } from './columns/UserColumns';
 import Pagination from './components/Pagination';
 import UserFilterButton from './components/UserFilterButton';
-import { fetchUserFiling, fetchUserStatus } from './data/fetchData';
 import { BalanceIndexTable } from './table/BalanceIndexTable';
 type PageProps = {
     users: User[];
@@ -23,6 +22,13 @@ export default function BalanceIndex() {
         month: String(filters.month) ?? String(new Date().getMonth() + 1),
         year: String(filters.year) ?? String(new Date().getFullYear()),
     });
+
+    const currentDate = new Date(
+        Number(form.data.year),
+        Number(form.data.year) - 1,
+        1,
+    );
+    const monthName = format(currentDate, 'MMMM');
 
     function handleFilter(
         newFilter: Partial<{ month?: string; year?: string }>,
@@ -41,6 +47,10 @@ export default function BalanceIndex() {
             <div className="flex h-full flex-1 flex-col gap-4 space-y-2 overflow-x-auto rounded-xl md:p-14">
                 <div className="flex items-center justify-between">
                     <div>
+                        <h3 className="flex scroll-m-20 items-center gap-1.5 text-2xl font-semibold tracking-tight text-sky-600">
+                            <Calendar1Icon /> {monthName} {form.data.year}
+                        </h3>
+
                         <h1 className="text-4xl font-bold text-sky-600">
                             Balance Overview
                         </h1>
@@ -51,12 +61,6 @@ export default function BalanceIndex() {
                         </p>
                     </div>
                     <div>
-                        {/* <FilterButton
-                            month={month}
-                            year={year}
-                            onMonthChange={setMonth}
-                            onYearChange={setYear}
-                        /> */}
                         <UserFilterButton
                             filter={form.data}
                             handleFilter={handleFilter}
@@ -64,13 +68,16 @@ export default function BalanceIndex() {
                     </div>
                 </div>
                 <div className="min-h-100vh relative flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <>
-                        <BalanceIndexTable
-                            columns={UserColumns}
-                            data={users?.data ?? []}
-                        />
-                        <Pagination links={users?.links} />
-                    </>
+                    {users && (
+                        <>
+                            <BalanceIndexTable
+                                columns={UserColumns}
+                                data={users?.data ?? []}
+                            />
+
+                            <Pagination links={users?.links} />
+                        </>
+                    )}
                 </div>
             </div>
         </>

@@ -10,12 +10,11 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { User } from '@/types';
-import { CalendarCheck, CalendarDays, Pencil, Trash2 } from 'lucide-react';
-import DeleteDialog from './DeleteDialog';
-import { useForm } from '@inertiajs/react';
 import calendar from '@/routes/calendar';
+import { User } from '@/types';
+import { useForm } from '@inertiajs/react';
 import { useQueryClient } from '@tanstack/react-query';
+import { CalendarCheck, CalendarDays, Pencil, Trash2 } from 'lucide-react';
 
 type Props = {
     open: boolean;

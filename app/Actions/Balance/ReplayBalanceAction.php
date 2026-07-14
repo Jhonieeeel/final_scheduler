@@ -150,7 +150,8 @@ class ReplayBalanceAction
                 'events'          => $deductionData['events'],
                 'undertimeCount'  => $deductionData['undertimeCount'],
                 'tardinessCount'  => $deductionData['tardinessCount'],
-                'leaves'          => $leavesCollection
+                'leaves'          => $leavesCollection,
+                'date'            => $date
             ];
         })->values()->toArray();
     }

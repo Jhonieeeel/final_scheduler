@@ -10,6 +10,7 @@ use App\Models\Leave;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class BalanceController extends Controller
@@ -33,7 +34,7 @@ class BalanceController extends Controller
             ->paginate(5)
             ->withQueryString();
 
-        return Inertia::render('Balance/BalanceIndex', ['users' => $users, 'filters' => ['month' => $month, 'year'=> $year]]);
+        return Inertia::render('Balance/BalanceIndex', ['users' => $users, 'filters' => ['month' => $month, 'year' => $year]]);
     }
 
     // public function index(Request $request)
@@ -114,7 +115,9 @@ class BalanceController extends Controller
         $month = request()->input('month', now()->month);
         $year  = request()->input('year', now()->year);
 
-        return Inertia::render("Balance/UserBalance", ['user' => $user, 'date' => Carbon::create($year, $month)]);
+        $filepath = request()->query('filepath');
+
+        return Inertia::render("Balance/UserBalance", ['user' => $user, 'date' => Carbon::create($year, $month), 'filepath' => $filepath]);
     }
 
     public function data(User $user, ReplayBalanceAction $action)
@@ -126,8 +129,6 @@ class BalanceController extends Controller
         $replayBalances = $action->replayUserBalance($date, $user);
         $hasNextAccrual = Leave::hasNextMonthAccrual($user, $date);
         $transactions   = Leave::transactionPerMonth($user, $date);
-
-        info($hasNextAccrual);
 
         return response()->json([
             'balances' => $replayBalances,
@@ -141,17 +142,27 @@ class BalanceController extends Controller
     {
         $month = request()->input('month', now()->month);
         $year  = request()->input('year', now()->year);
+        $user_id = request()->input('user_id');
 
         $date  = Carbon::create((int) $year, (int) $month, 1)->startOfMonth();
-
 
         $users = User::select(['id', 'name'])->get();
 
         $replayUsersBalance = $action->replayUsersBalance($date, $users);
 
-        $exportAction->writeExcel($replayUsersBalance);
+        // filename
+        $filepath = $exportAction->writeExcel($replayUsersBalance);
 
-        return response()->json($replayUsersBalance);
+        return to_route("balance.show", ['user' => $user_id, 'filepath' => $filepath]);
+    }
+
+    public function downloadFile()
+    {
+        $filepath = request()->query('filepath');
+
+        $public_file = storage_path("app/public/$filepath");
+
+        return Storage::disk('public')->download($filepath);
     }
 
     /**
@@ -165,9 +176,15 @@ class BalanceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Leave $leave)
     {
-        //
+
+        $leave->update([
+            'status' => $request->status,
+            'remarks' => $request->remarks
+        ]);
+
+        return to_route('balance.index')->with('message', 'Leave monthly filing updated!');
     }
 
     /**

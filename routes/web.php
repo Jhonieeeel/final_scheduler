@@ -22,6 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/balances/user/{user}', [BalanceController::class, 'show'])->name('balance.show');
     Route::get('/balances/user/{user}/data', [BalanceController::class, 'data'])->name('balance.data');
     Route::delete('/balances/delete', [BalanceController::class, 'destroy'])->name('balance.destroy');
+    Route::put("/balance/{leave}/update", [BalanceController::class, 'update'])->name('balance.update');
 
     // balance users status
     Route::get("balance/users_filing", [BalanceController::class, 'usersFiling'])->name('balance.filing');
@@ -38,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // excel exporting
     Route::get("/balances/export", [BalanceController::class, 'exportFile'])->name('balance.export');
+    Route::get("/balances/download", [BalanceController::class, 'downloadFile'])->name('balance.download');
 });
 
 require __DIR__ . '/settings.php';

@@ -1,3 +1,5 @@
+import { Leave, PaginationLink } from './ui';
+
 export type User = {
     id: number;
     name: string;
@@ -7,6 +9,8 @@ export type User = {
     two_factor_enabled?: boolean;
     created_at: string;
     updated_at: string;
+    data?: Leave[];
+    links?: PaginationLink[];
     [key: string]: unknown;
 };
 

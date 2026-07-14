@@ -14,7 +14,7 @@ import { BalanceIndexTable } from './table/BalanceIndexTable';
 import { Button } from '@base-ui/react';
 import GenerateButton from './components/GenerateButton';
 
-type PageProps = { user: User };
+type PageProps = { user: User; filepath: string };
 
 type BalanceResponse = {
     date?: string;
@@ -29,7 +29,11 @@ type BalanceResponse = {
 };
 
 export default function UserBalance() {
-    const { user } = usePage<PageProps>().props;
+    const { user, filepath } = usePage<PageProps>().props;
+
+    if (filepath) {
+        console.log(filepath);
+    }
 
     const [month, setMonth] = useState(String(new Date().getMonth() + 1));
     const [year, setYear] = useState(String(new Date().getFullYear()));
@@ -82,7 +86,12 @@ export default function UserBalance() {
                                 onMonthChange={setMonth}
                                 onYearChange={setYear}
                             />
-                            <GenerateButton month={month} year={year} />
+                            <GenerateButton
+                                user_id={user.id}
+                                month={month}
+                                year={year}
+                                filepath={filepath}
+                            />
                         </div>
                     </div>
                 </div>

@@ -2,6 +2,8 @@
 
 namespace App\Actions\Excel;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -27,6 +29,7 @@ class ExportFile
             $balances = $replay['balances'];
             $events   = $replay['events'];
             $leaves   = $replay['leaves'];
+            $date = Carbon::parse($replay['date']);
 
             // name
             $activeSheet->setCellValue("B$cellStart", $name);
@@ -68,19 +71,19 @@ class ExportFile
                 }
             }
 
-            $activeSheet->setCellValue("K$cellStart", $replay['tardinessCount']);
-            $activeSheet->setCellValue("L$cellStart", $replay['undertimeCount']);
+            $activeSheet->setCellValue("K$cellStart", $replay['tardinessCount'] <= 0 ? '' : $replay['tardinessCount']);
+            $activeSheet->setCellValue("L$cellStart", $replay['undertimeCount'] <= 0 ? '' : $replay['undertimeCount']);
 
             $cellStart = max($firstHalfRow, $secondHalfRow) + 1;
         }
 
 
-        $outputFileName = 'monthName_year.xlsx';
-        $outputPath = public_path($outputFileName);
+        $outputFileName = "reports/{$date?->format('F_Y')}.xlsx";
+        $outputPath = Storage::disk('public')->path($outputFileName);
 
         $writer = new Xlsx($spreadSheet);
         $writer->save($outputPath);
-
-        return $outputPath;
+        // reports/filename.xlsx
+        return $outputFileName;
     }
 }

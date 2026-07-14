@@ -1,33 +1,10 @@
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { CalendarDays, CalendarCheck, Trash2, Pencil } from 'lucide-react';
 import { UserInfo } from '@/components/user-info';
 import { User } from '@/types';
-import DeleteDialog from './DeleteDialog';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { useState } from 'react';
-import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import { useForm } from '@inertiajs/react';
-import ViewEvent from './ViewEvent';
+import { useState } from 'react';
 import EditEvent from './EditEvent';
+import ViewEvent from './ViewEvent';
 
 interface Props {
     open: boolean;
