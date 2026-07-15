@@ -11,9 +11,9 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import balance from '@/routes/balance';
 import calendar from '@/routes/calendar';
+import dashboard from '@/routes/dashboard';
 import leave from '@/routes/leave';
 import undertime from '@/routes/undertime';
 import type { MainNav } from '@/types';
@@ -32,7 +32,7 @@ const mainNavItems: MainNav[] = [
         items: [
             {
                 title: 'Dashboard',
-                href: dashboard(),
+                href: dashboard.index(),
                 icon: LayoutGrid,
             },
         ],
@@ -76,7 +76,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href={dashboard.index()} prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

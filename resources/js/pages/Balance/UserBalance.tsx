@@ -86,12 +86,6 @@ export default function UserBalance() {
                                 onMonthChange={setMonth}
                                 onYearChange={setYear}
                             />
-                            <GenerateButton
-                                user_id={user.id}
-                                month={month}
-                                year={year}
-                                filepath={filepath}
-                            />
                         </div>
                     </div>
                 </div>

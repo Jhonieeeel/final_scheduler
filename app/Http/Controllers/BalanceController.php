@@ -10,6 +10,7 @@ use App\Models\Leave;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -34,7 +35,10 @@ class BalanceController extends Controller
             ->paginate(5)
             ->withQueryString();
 
-        return Inertia::render('Balance/BalanceIndex', ['users' => $users, 'filters' => ['month' => $month, 'year' => $year]]);
+        return Inertia::render('Balance/BalanceIndex', [
+            'users' => $users,
+            'filters' => ['month' => $month, 'year' => $year]
+        ]);
     }
 
     // public function index(Request $request)
@@ -141,28 +145,34 @@ class BalanceController extends Controller
     public function exportFile(ReplayBalanceAction $action, ExportFile $exportAction)
     {
         $month = request()->input('month', now()->month);
-        $year  = request()->input('year', now()->year);
-        $user_id = request()->input('user_id');
-
-        $date  = Carbon::create((int) $year, (int) $month, 1)->startOfMonth();
+        $year = request()->input('year', now()->year);
+        $date = Carbon::create((int) $year, (int) $month, 1)->startOfMonth();
 
         $users = User::select(['id', 'name'])->get();
-
         $replayUsersBalance = $action->replayUsersBalance($date, $users);
 
-        // filename
-        $filepath = $exportAction->writeExcel($replayUsersBalance);
+        $filename = $exportAction->writeExcel($replayUsersBalance);
 
-        return to_route("balance.show", ['user' => $user_id, 'filepath' => $filepath]);
+        // Exporting...http://localhost:8000/storage/reports/January_2023.xlsx
+        // info("Exporting..." . $filename);
+
+        return back()->with('downloadUrl', $filename);
+
+        // dd(route('balance.download', ['filename' => $filename]));
+
+
+        // return to_route('balance.download', ['filename' => $filename]);
     }
 
-    public function downloadFile()
+    public function downloadFile(Request $request)
     {
-        $filepath = request()->query('filepath');
 
-        $public_file = storage_path("app/public/$filepath");
+        // reports/filenane.xlsx
+        $filename = $request->query('filename');
 
-        return Storage::disk('public')->download($filepath);
+        // http://localhost:8000/storage/reports/January_2023.xlsx
+        // open on a new tab
+        return response()->download($filename);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\UndertimeController;
 use Illuminate\Support\Facades\Route;
@@ -9,8 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::inertia('/', 'welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
-
+    Route::get("dashboard", [DashboardController::class, 'index'])->name('dashboard.index');
     // Leave
     Route::get("leave", [LeaveController::class, 'index'])->name('leave.index');
     Route::post("leave", [LeaveController::class, 'store'])->name('leave.store');
@@ -38,8 +38,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get("/calendar/events/data", [LeaveController::class, 'data'])->name('calendar.data');
 
     // excel exporting
-    Route::get("/balances/export", [BalanceController::class, 'exportFile'])->name('balance.export');
-    Route::get("/balances/download", [BalanceController::class, 'downloadFile'])->name('balance.download');
+    Route::post('/balances/export', [BalanceController::class, 'exportFile'])->name('balance.export');
+    Route::get('/balances/download', [BalanceController::class, 'downloadFile'])->name('balance.download');
 });
 
 require __DIR__ . '/settings.php';

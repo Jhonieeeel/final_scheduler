@@ -79,11 +79,20 @@ class ExportFile
 
 
         $outputFileName = "reports/{$date?->format('F_Y')}.xlsx";
-        $outputPath = Storage::disk('public')->path($outputFileName);
+
+        $filename = $date?->format('F_Y') . '.xlsx';
+        $outputPath = storage_path('app/public/' . $outputFileName);
+
+        $url = asset('storage/' . $outputFileName);
+
+        if (!file_exists(dirname($outputPath))) {
+            mkdir(dirname($outputPath), 0755, true);
+        }
 
         $writer = new Xlsx($spreadSheet);
         $writer->save($outputPath);
-        // reports/filename.xlsx
-        return $outputFileName;
+
+        // reports/filename.xlsx, mao ni ang pangitaon para edownload
+        return $url;
     }
 }

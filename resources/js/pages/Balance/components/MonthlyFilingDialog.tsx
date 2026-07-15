@@ -44,7 +44,7 @@ export default function MonthlyFilingDialog({ filing }: FilingProp) {
         <Dialog>
             <DialogTrigger asChild>
                 <Button
-                    className="inline-flex w-full items-center justify-start gap-3"
+                    className="inline-flex w-full cursor-pointer items-center justify-start gap-3"
                     variant="ghost"
                 >
                     <File />

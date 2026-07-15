@@ -7,16 +7,24 @@ import { UserColumns } from './columns/UserColumns';
 import Pagination from './components/Pagination';
 import UserFilterButton from './components/UserFilterButton';
 import { BalanceIndexTable } from './table/BalanceIndexTable';
+import GenerateButton from './components/GenerateButton';
+
 type PageProps = {
-    users: User[];
+    users: any; // Adjusted to 'any' or your paginated object structure
     filters: {
         month: string;
         year: string;
     };
+    flash?: {
+        downloadUrl?: string;
+    };
+    filename: string;
 };
 
 export default function BalanceIndex() {
-    const { users, filters } = usePage<PageProps>().props;
+    const { users, filters, flash, filename } = usePage<PageProps>().props;
+
+    console.log(flash?.downloadUrl);
 
     const form = useForm({
         month: String(filters.month) ?? String(new Date().getMonth() + 1),
@@ -25,7 +33,7 @@ export default function BalanceIndex() {
 
     const currentDate = new Date(
         Number(form.data.year),
-        Number(form.data.year) - 1,
+        Number(form.data.month) - 1,
         1,
     );
     const monthName = format(currentDate, 'MMMM');
@@ -34,7 +42,6 @@ export default function BalanceIndex() {
         newFilter: Partial<{ month?: string; year?: string }>,
     ) {
         form.setData({ ...form.data, ...newFilter });
-
         form.get(balance.index().url, {
             preserveState: true,
             replace: true,
@@ -50,23 +57,28 @@ export default function BalanceIndex() {
                         <h3 className="flex scroll-m-20 items-center gap-1.5 text-2xl font-semibold tracking-tight text-sky-600">
                             <Calendar1Icon /> {monthName} {form.data.year}
                         </h3>
-
                         <h1 className="text-4xl font-bold text-sky-600">
-                            Balance Overview
+                            {' '}
+                            Balance Overview{' '}
                         </h1>
-                        <p className="">
+                        <p className="text-muted-foreground">
                             Monitor team leave entitlements, track utilization
                             trends, and manage pending requests across all
                             departments.
                         </p>
                     </div>
-                    <div>
+                    <div className="flex items-center gap-2">
                         <UserFilterButton
                             filter={form.data}
                             handleFilter={handleFilter}
                         />
+                        <GenerateButton
+                            month={form.data.month}
+                            year={form.data.year}
+                        />
                     </div>
                 </div>
+
                 <div className="min-h-100vh relative flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
                     {users && (
                         <>
@@ -74,7 +86,6 @@ export default function BalanceIndex() {
                                 columns={UserColumns}
                                 data={users?.data ?? []}
                             />
-
                             <Pagination links={users?.links} />
                         </>
                     )}
