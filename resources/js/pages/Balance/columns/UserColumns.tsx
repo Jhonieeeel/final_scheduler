@@ -18,7 +18,7 @@ export const UserColumns: ColumnDef<Leave>[] = [
     {
         accessorKey: 'name',
         header: () => (
-            <div className="text-left text-xs tracking-wide uppercase">
+            <div className="text-left text-xs tracking-wide text-gray-500 uppercase">
                 Employee Name
             </div>
         ),
@@ -31,7 +31,7 @@ export const UserColumns: ColumnDef<Leave>[] = [
     {
         accessorKey: 'status',
         header: () => (
-            <div className="text-left text-xs tracking-wide uppercase">
+            <div className="text-left text-xs tracking-wide text-gray-500 uppercase">
                 Monthly Status
             </div>
         ),
@@ -61,10 +61,26 @@ export const UserColumns: ColumnDef<Leave>[] = [
             );
         },
     },
+    {
+        accessorKey: 'section',
+        header: () => (
+            <div className="text-left text-xs tracking-wide text-gray-500 uppercase">
+                Section
+            </div>
+        ),
+        cell: ({ row }) => {
+            const name = row.original.user.name;
 
+            return <div className="text-left"></div>;
+        },
+    },
     {
         id: 'actions',
-        header: () => <div className="text-left">Action</div>,
+        header: () => (
+            <div className="text-left text-xs tracking-wide text-gray-500 uppercase">
+                Action
+            </div>
+        ),
         cell: ({ row }) => {
             let user_id = row.original.user.id;
 

@@ -22,6 +22,11 @@ return new class extends Migration
             $table->datetime('ends_at');
             $table->boolean('status')->default(false);
             $table->text('remarks')->nullable();
+
+            // auto offset / cto
+            $table->string('leave_category')->nullable();
+            $table->string('filed')->nullable();
+
             $table->timestamps();
         });
     }

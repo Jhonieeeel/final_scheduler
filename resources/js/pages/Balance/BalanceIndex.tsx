@@ -79,7 +79,7 @@ export default function BalanceIndex() {
                     </div>
                 </div>
 
-                <div className="min-h-100vh relative flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
+                <div className="min-h-100vh relative flex-1 overflow-hidden rounded-xl border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
                     {users && (
                         <>
                             <BalanceIndexTable

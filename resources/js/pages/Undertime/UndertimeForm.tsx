@@ -157,7 +157,7 @@ export default function UndertimeForm() {
                                         users.find(
                                             (user) =>
                                                 user.id === form.data.user_id,
-                                        )?.name ?? ''
+                                        )?.name ?? null
                                     }
                                     placeholder="Select an employee"
                                 />
