@@ -41,18 +41,31 @@ class ExportFile
             $firstHalfEvents = [];
             $secondHalfEvents = [];
 
+            $firstHalfHours = 0;
+            $firstHalfMinutes = 0;
+
+            $secondHalfHours = 0;
+            $secondHalfMinutes = 0;
+
             foreach ($events as $event) {
                 if ($event['day'] <= 15) {
                     $firstHalfEvents[] = $event['label'];
-                    $activeSheet->setCellValue("E$firstHalfRow", $event['hours'] <= 0 ? '' : $event['hours']);
-                    $activeSheet->setCellValue("F$firstHalfRow", $event['minutes'] <= 0 ? '' : $event['minutes']);
+                    $firstHalfHours += $event['hours'];
+                    $firstHalfMinutes += $event['minutes'];
                 } else {
                     $secondHalfEvents[] = $event['label'];
-                    $activeSheet->setCellValue("H$secondHalfRow", $event['hours'] <= 0 ? '' : $event['hours']);
-                    $activeSheet->setCellValue("I$secondHalfRow", $event['minutes'] <= 0 ? '' : $event['minutes']);
+                    $secondHalfHours += $event['hours'];
+                    $secondHalfMinutes += $event['minutes'];
                 }
             }
+            // hours and minutes 
+            $activeSheet->setCellValue("E$firstHalfRow", $event['hours'] <= 0 ? '' : $firstHalfHours);
+            $activeSheet->setCellValue("F$firstHalfRow", $event['minutes'] <= 0 ? '' : $firstHalfMinutes);
 
+            $activeSheet->setCellValue("H$secondHalfRow", $event['hours'] <= 0 ? '' : $secondHalfHours);
+            $activeSheet->setCellValue("I$secondHalfRow", $event['minutes'] <= 0 ? '' : $secondHalfMinutes);
+
+            // event per kinsesa
             $activeSheet->setCellValue("D$cellStart", implode("\n", $firstHalfEvents));
             $activeSheet->setCellValue("G$cellStart", implode("\n", $secondHalfEvents));
 
@@ -65,11 +78,12 @@ class ExportFile
 
 
 
+
             foreach ($balances as $balance) {
-                if ($balance['leave_type'] == 'vacation leave') {
-                    $activeSheet->setCellValue("N$cellStart", $balance['estimatedBalance']);
-                } else if ($balance['leave_type'] == 'sick leave') {
-                    $activeSheet->setCellValue("O$cellStart", $balance['estimatedBalance']);
+                if ($balance['leave_type'] === 'vacation leave') {
+                    $activeSheet->setCellValue("N$cellStart", $balance['estimated']);
+                } else if ($balance['leave_type'] === 'sick leave') {
+                    $activeSheet->setCellValue("O$cellStart", $balance['estimated']);
                 } else {
                     continue;
                 }
@@ -77,6 +91,9 @@ class ExportFile
 
             $activeSheet->setCellValue("K$cellStart", $replay['tardinessCount'] <= 0 ? '' : $replay['tardinessCount']);
             $activeSheet->setCellValue("L$cellStart", $replay['undertimeCount'] <= 0 ? '' : $replay['undertimeCount']);
+
+            // remarks
+            $activeSheet->setCellValue("Q$cellStart", $replay['filing']);
 
             $cellStart = max($firstHalfRow, $secondHalfRow) + 1;
         }

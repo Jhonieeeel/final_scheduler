@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Balance\MonthlyAccrual;
+use App\Actions\Balance\ReplayAllUserBalance;
 use App\Actions\Balance\ReplayBalanceAction;
 use App\Actions\Excel\ExportFile;
 use App\Data\LeaveData;
@@ -10,8 +11,6 @@ use App\Models\Leave;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class BalanceController extends Controller
@@ -150,16 +149,18 @@ class BalanceController extends Controller
         ]);
     }
 
-    public function exportFile(ReplayBalanceAction $action, ExportFile $exportAction)
+    public function exportFile(ReplayBalanceAction $action, ExportFile $exportAction, ReplayAllUserBalance $allUserAction)
     {
         $month = request()->input('month', now()->month);
         $year = request()->input('year', now()->year);
         $date = Carbon::create((int) $year, (int) $month, 1)->startOfMonth();
 
         $users = User::select(['id', 'name'])->get();
-        $replayUsersBalance = $action->replayUsersBalance($date, $users);
+        // $replayUsersBalance = $action->replayUsersBalance($date, $users);
 
-        $filename = $exportAction->writeExcel($replayUsersBalance);
+        $allUsers = $allUserAction->allTransactionsForUsers($date, $users);
+
+        $filename = $exportAction->writeExcel($allUsers);
 
         // Exporting...http://localhost:8000/storage/reports/January_2023.xlsx
         // info("Exporting..." . $filename);
