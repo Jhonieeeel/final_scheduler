@@ -76,7 +76,10 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard.index()} prefetch>
+                            <Link
+                                href={dashboard.index()}
+                                prefetch={['mount', 'hover']}
+                            >
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

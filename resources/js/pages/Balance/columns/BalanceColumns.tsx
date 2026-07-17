@@ -29,6 +29,7 @@ import {
     Heart,
     Calendar,
     MoreHorizontal,
+    Icon,
 } from 'lucide-react';
 
 export type BalanceProps = {
@@ -67,6 +68,7 @@ export const BalanceColumns: ColumnDef<BalanceProps>[] = [
         cell: ({ row }) => {
             const leaveType = row.original.leave_type;
             const eventTag = row.original.event_tag;
+            const eventType = row.original.event_type;
 
             const isAttendanceTag =
                 eventTag === 'tardiness' || eventTag === 'undertime';
@@ -76,9 +78,9 @@ export const BalanceColumns: ColumnDef<BalanceProps>[] = [
             const Icon = getLeaveIcon(leaveType, eventTag);
 
             let badgeColorClass;
-            if (eventTag === 'deduction') {
+            if (eventTag === 'leave' || eventType === 'deduction') {
                 badgeColorClass = 'bg-red-100 text-red-700 border-red-200';
-            } else if (eventTag === 'accrual') {
+            } else if (eventType === 'accrual') {
                 badgeColorClass =
                     'bg-green-100 text-green-700 border-green-200';
             } else {
@@ -97,6 +99,28 @@ export const BalanceColumns: ColumnDef<BalanceProps>[] = [
         },
     },
     {
+        accessorKey: 'event_type',
+        header: () => (
+            <div className="text-left text-[11px] font-medium tracking-wider text-sky-600 uppercase">
+                Event type
+            </div>
+        ),
+        cell: ({ row }) => {
+            const type = row.original.event_type;
+
+            let textColor =
+                type === 'accrual' ? 'text-green-700' : 'text-amber-700';
+
+            return (
+                <div
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium capitalize ${textColor}`}
+                >
+                    {type}
+                </div>
+            );
+        },
+    },
+    {
         accessorKey: 'balance',
         header: () => (
             <div className="text-left text-[11px] font-medium tracking-wider text-sky-600 uppercase">
@@ -105,7 +129,6 @@ export const BalanceColumns: ColumnDef<BalanceProps>[] = [
         ),
         cell: ({ row }) => {
             const balance = row.original.balance;
-            const leaveType = row.original.leave_type;
             const isAccrual = row.original.event_type === 'accrual';
 
             const sign = isAccrual ? '+' : '';
@@ -130,46 +153,25 @@ export const BalanceColumns: ColumnDef<BalanceProps>[] = [
             </div>
         ),
         cell: ({ row }) => {
-            const eventTag = row.original.event_tag;
             const startsAt = parseISO(row.original.starts_at);
             const endsAt = parseISO(row.original.ends_at);
 
             let dateLabel = '';
-            let subLabel = '';
 
-            if (eventTag === 'tardiness' || eventTag === 'undertime') {
-                const minutes = differenceInMinutes(endsAt, startsAt);
+            if (isSameDay(startsAt, endsAt)) {
                 dateLabel = format(startsAt, 'MMM d, yyyy');
-                subLabel = `${minutes} mins`;
+            } else if (
+                isSameMonth(startsAt, endsAt) &&
+                isSameYear(startsAt, endsAt)
+            ) {
+                dateLabel = `${format(startsAt, 'MMM d')}-${format(endsAt, 'd, yyyy')}`;
+            } else if (isSameYear(startsAt, endsAt)) {
+                dateLabel = `${format(startsAt, 'MMM d')}-${format(endsAt, 'MMM d, yyyy')}`;
             } else {
-                if (isSameDay(startsAt, endsAt)) {
-                    dateLabel = format(startsAt, 'MMM d, yyyy');
-                } else if (
-                    isSameMonth(startsAt, endsAt) &&
-                    isSameYear(startsAt, endsAt)
-                ) {
-                    dateLabel = `${format(startsAt, 'MMM d')}-${format(endsAt, 'd, yyyy')}`;
-                } else if (isSameYear(startsAt, endsAt)) {
-                    dateLabel = `${format(startsAt, 'MMM d')}-${format(endsAt, 'MMM d, yyyy')}`;
-                } else {
-                    dateLabel = `${format(startsAt, 'MMM d, yyyy')}-${format(endsAt, 'MMM d, yyyy')}`;
-                }
-
-                if (row.original.event_type === 'accrual') {
-                    subLabel = 'Accrual';
-                }
+                dateLabel = `${format(startsAt, 'MMM d, yyyy')}-${format(endsAt, 'MMM d, yyyy')}`;
             }
 
-            return (
-                <div className="flex flex-col gap-0.5">
-                    <span className="text-sm">{dateLabel}</span>
-                    {subLabel && (
-                        <span className="text-[11px] text-sky-600">
-                            {subLabel}
-                        </span>
-                    )}
-                </div>
-            );
+            return <span className="text-sm">{dateLabel}</span>;
         },
     },
     {

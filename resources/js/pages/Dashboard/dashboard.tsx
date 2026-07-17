@@ -25,7 +25,7 @@ export default function Dashboard() {
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl md:px-14 md:py-4">
                 <div>
-                    <h3 className="text-2xl font-bold text-sky-600">
+                    <h3 className="text-4xl font-bold text-sky-600">
                         Dashboard
                     </h3>
                     <p className="text-sm text-gray-600">

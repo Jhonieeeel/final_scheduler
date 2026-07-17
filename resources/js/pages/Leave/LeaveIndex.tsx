@@ -7,10 +7,13 @@ export default function LeaveIndex() {
     return (
         <>
             <Head title="Leave" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl md:p-14">
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl md:px-14 md:py-4">
                 <div>
-                    <h1 className="text-4xl font-bold">File a Leave Request</h1>
-                    <p className="">
+                    <h1 className="text-4xl font-bold text-sky-600">
+                        {' '}
+                        Report Attendance Issue
+                    </h1>
+                    <p className="text-muted-foreground">
                         Submit your time off request for approval by your
                         manager.
                     </p>

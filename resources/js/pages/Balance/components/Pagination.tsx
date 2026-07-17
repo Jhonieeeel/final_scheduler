@@ -12,7 +12,7 @@ type LinkProp = {
 
 export default function Pagination({ links }: LinkProp) {
     return (
-        <div className="mt-4 flex flex-wrap items-center space-x-1">
+        <div className="mt-4 flex flex-wrap items-center justify-end space-x-1">
             {links?.map((data, index) => (
                 <Link
                     key={index}

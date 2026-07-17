@@ -9,7 +9,7 @@ import {
 import { cn } from '@/lib/utils';
 import balance from '@/routes/balance';
 import { Leave } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Hash, MoreHorizontal } from 'lucide-react';
 import MonthlyFilingDialog from '../components/MonthlyFilingDialog';
@@ -86,6 +86,11 @@ export const UserColumns: ColumnDef<Leave>[] = [
 
             let filing = row.original;
 
+            const searchParams = new URLSearchParams(window.location.search);
+
+            const month = searchParams.get('month');
+            const year = searchParams.get('year');
+
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -99,7 +104,12 @@ export const UserColumns: ColumnDef<Leave>[] = [
                         <DropdownMenuItem>
                             <Link
                                 className="inline-flex w-full items-center justify-start gap-3"
-                                href={balance.show(user_id)}
+                                href={
+                                    balance.show(user_id, {
+                                        month: searchParams.get('month'),
+                                        year: searchParams.get('year'),
+                                    }).url
+                                }
                             >
                                 <Hash />
                                 Balance

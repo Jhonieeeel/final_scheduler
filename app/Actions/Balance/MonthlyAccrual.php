@@ -36,6 +36,7 @@ class MonthlyAccrual
 
     public function vacationLeaveAccrual(LeaveData $data)
     {
+        info($data);
         Leave::create([
             'user_id' => $data->user_id,
             'leave_type' => 'vacation leave',

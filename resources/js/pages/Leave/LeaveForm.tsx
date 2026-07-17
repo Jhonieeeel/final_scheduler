@@ -357,13 +357,14 @@ export default function LeaveForm() {
                     {/* Button */}
                     <FieldGroup>
                         <div className="flex w-full items-center justify-end gap-3">
-                            <Button type="button" variant="outline">
+                            <Button type="button" variant="outline-sky">
                                 Cancel
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={form.processing}
                                 data-test="login-button"
+                                variant="sky"
                             >
                                 {form.processing && <Spinner />}
                                 Submit

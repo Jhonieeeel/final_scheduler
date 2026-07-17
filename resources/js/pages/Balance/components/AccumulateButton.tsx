@@ -3,8 +3,14 @@ import balance from '@/routes/balance';
 import { User } from '@/types';
 import { useForm } from '@inertiajs/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { addMonths, endOfMonth, format, startOfMonth } from 'date-fns';
-import { Calendar } from 'lucide-react';
+import {
+    addMonths,
+    endOfMonth,
+    format,
+    parseISO,
+    startOfMonth,
+} from 'date-fns';
+import { Calendar, Info } from 'lucide-react';
 
 type FormProps = {
     user: User;
@@ -14,7 +20,9 @@ type FormProps = {
 export default function AccumulateButton({ user, date }: FormProps) {
     const queryClient = useQueryClient();
 
-    const baseDate = addMonths(date, 1);
+    // 2023-01-01
+    // im expecting add 1 month
+    const baseDate = addMonths(parseISO(date), 1);
 
     const starts_at = format(startOfMonth(baseDate), 'yyyy-MM-dd');
     const ends_at = format(endOfMonth(baseDate), 'yyyy-MM-dd');

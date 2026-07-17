@@ -235,11 +235,10 @@ class ReplayBalanceAction
             $flUnused = max(0, $this->fixedFL - abs($flUsedThatYear));
 
             $result = array_map(function ($balance) use ($flUnused) {
-                if ($balance['leave_type'] === 'vacation leave') {
-                    $balance['currentBalance']  -= $flUnused;
-                    $balance['previousBalance'] -= $flUnused;
-                    $balance['estimatedBalance'] = $balance['currentBalance'] + 1.25;
-                }
+               if ($balance['leave_type'] === 'vacation leave') {
+    $balance['currentBalance']  -= $flUnused;
+    $balance['estimatedBalance'] = $balance['currentBalance'] + 1.25;
+}
                 return $balance;
             }, $result);
         }

@@ -19,12 +19,12 @@ type PageProps = {
         downloadUrl?: string;
     };
     filename: string;
+    url: string;
 };
 
 export default function BalanceIndex() {
-    const { users, filters, flash, filename } = usePage<PageProps>().props;
-
-    console.log(flash?.downloadUrl);
+    const { users, filters, flash, filename, url } = usePage<PageProps>().props;
+    console.log(url);
 
     const form = useForm({
         month: String(filters.month) ?? String(new Date().getMonth() + 1),
@@ -51,7 +51,7 @@ export default function BalanceIndex() {
     return (
         <>
             <Head title="Balance" />
-            <div className="flex h-full flex-1 flex-col gap-4 space-y-2 overflow-x-auto rounded-xl md:p-14">
+            <div className="flex h-full flex-1 flex-col gap-4 space-y-2 overflow-x-auto rounded-xl md:px-14 md:py-4">
                 <div className="flex items-center justify-between">
                     <div>
                         <h3 className="flex scroll-m-20 items-center gap-1.5 text-2xl font-semibold tracking-tight text-sky-600">

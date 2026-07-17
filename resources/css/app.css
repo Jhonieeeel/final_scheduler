@@ -149,6 +149,29 @@
     html {
         @apply font-sans;
     }
+
+}
+
+@layer components {
+    .btn-primary {
+        @apply border border-sky-600 bg-sky-600 text-sm font-medium text-white shadow-md transition-all duration-300 hover:bg-sky-700 hover:border-sky-700 hover:shadow-sky-300/20 dark:bg-sky-500 dark:border-sky-500 dark:hover:bg-sky-400 dark:hover:border-sky-400;
+    }
+    /* card */
+    .card-primary {
+        @apply relative overflow-hidden rounded-2xl border border-sky-200/40 bg-linear-to-br from-sky-50/70 via-white/40 to-sky-100/60 shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-sky-300/50 hover:shadow-sky-300/10 dark:border-sky-800/40 dark:from-sky-950/40 dark:via-slate-900/40 dark:to-sky-900/30
+    }
+    .card-title-primary { 
+        @apply flex items-start justify-between text-sm font-medium text-slate-600 dark:text-slate-300
+    }
+
+    /* card icon  */
+    .card-icon-primary {
+        @apply flex h-11 w-11 items-center justify-center rounded-xl border border-white/30 bg-linear-to-br from-sky-200/80 to-sky-400/60 shadow-md backdrop-blur-md dark:border-sky-700/40 dark:from-sky-900 dark:to-sky-700
+    }
+
+    .card-icon {
+        @apply h-5 w-5 text-sky-700 dark:text-sky-300
+    }
 }
 
 @theme inline {

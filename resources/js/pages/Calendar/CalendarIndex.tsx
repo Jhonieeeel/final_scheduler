@@ -22,7 +22,7 @@ export default function CelendarIndex() {
     return (
         <>
             <Head title="Calendar" />
-            <div className="flex h-full flex-1 flex-col gap-4 space-y-2 overflow-x-auto rounded-xl md:p-14">
+            <div className="flex h-full flex-1 flex-col gap-4 space-y-2 overflow-x-auto rounded-xl md:px-14 md:py-4">
                 <div>
                     {flash?.message && (
                         <Alert>
@@ -34,7 +34,9 @@ export default function CelendarIndex() {
                             </AlertAction>
                         </Alert>
                     )}
-                    <h1 className="text-4xl font-bold">Leave Calendar</h1>
+                    <h1 className="text-4xl font-bold text-sky-600">
+                        Leave Calendar
+                    </h1>
                     <p className="text-muted-foreground">
                         View approved leaves, upcoming absences, and company
                         holidays in one place.

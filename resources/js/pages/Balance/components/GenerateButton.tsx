@@ -50,7 +50,7 @@ export default function GenerateButton({ month, year }: ButtonProp) {
         <Button
             onClick={handleGenerate}
             disabled={form.processing}
-            className="cursor-pointer rounded-md border border-sky-700 bg-sky-50 px-3 py-1.5 text-sm font-medium text-sky-700 transition-colors hover:bg-sky-700 hover:text-white dark:border-sky-600 dark:bg-sky-950 dark:text-sky-400 dark:hover:bg-sky-700 dark:hover:text-white"
+            variant="outline-sky"
         >
             {form.processing ? <Spinner /> : <FileOutputIcon />}
             <span className="ml-1.5">Export</span>

@@ -57,9 +57,13 @@ class ExportFile
             $activeSheet->setCellValue("G$cellStart", implode("\n", $secondHalfEvents));
 
 
+            $allLeaves = [];
             foreach ($leaves as $leave) {
-                $activeSheet->setCellValue("J$cellStart", $leave['label']);
+                $allLeaves[] = $leave["label"];
             }
+            $activeSheet->setCellValue("J$cellStart", implode("\n", $allLeaves));
+
+
 
             foreach ($balances as $balance) {
                 if ($balance['leave_type'] == 'vacation leave') {

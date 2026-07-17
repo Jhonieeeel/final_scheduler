@@ -57,7 +57,7 @@ export default function UserFilterButton({
         <div>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button className="rounded-md bg-sky-700 px-2 py-1.5 text-white hover:bg-sky-800 dark:bg-sky-800 dark:hover:bg-sky-700">
+                    <Button variant="sky">
                         <Filter className="h-4 w-4" />
                         Filter by
                     </Button>

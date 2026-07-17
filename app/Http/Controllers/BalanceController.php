@@ -119,9 +119,13 @@ class BalanceController extends Controller
         $month = request()->input('month', now()->month);
         $year  = request()->input('year', now()->year);
 
-        $filepath = request()->query('filepath');
-
-        return Inertia::render("Balance/UserBalance", ['user' => $user, 'date' => Carbon::create($year, $month), 'filepath' => $filepath]);
+        return Inertia::render(
+            "Balance/UserBalance",
+            [
+                'user' => $user,
+                'date' => Carbon::create($year, $month),
+            ]
+        );
     }
 
     public function data(User $user, ReplayBalanceAction $action)
@@ -134,11 +138,15 @@ class BalanceController extends Controller
         $hasNextAccrual = Leave::hasNextMonthAccrual($user, $date);
         $transactions   = Leave::transactionPerMonth($user, $date);
 
+
+        $testing = Leave::allTransactions($date, $user);
+
         return response()->json([
             'balances' => $replayBalances,
             'date'     => $date->format('Y-m-d'),
             'hasNext'  => $hasNextAccrual,
-            'transactions' => $transactions
+            'transactions' => $transactions,
+            'testing' => $testing
         ]);
     }
 
