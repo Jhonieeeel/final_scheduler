@@ -58,12 +58,12 @@ class ExportFile
                     $secondHalfMinutes += $event['minutes'];
                 }
             }
-            // hours and minutes 
-            $activeSheet->setCellValue("E$firstHalfRow", $event['hours'] <= 0 ? '' : $firstHalfHours);
-            $activeSheet->setCellValue("F$firstHalfRow", $event['minutes'] <= 0 ? '' : $firstHalfMinutes);
+            // hours and minutes
+            $activeSheet->setCellValue("E$firstHalfRow",   $firstHalfHours);
+            $activeSheet->setCellValue("F$firstHalfRow",   $firstHalfMinutes);
 
-            $activeSheet->setCellValue("H$secondHalfRow", $event['hours'] <= 0 ? '' : $secondHalfHours);
-            $activeSheet->setCellValue("I$secondHalfRow", $event['minutes'] <= 0 ? '' : $secondHalfMinutes);
+            $activeSheet->setCellValue("H$secondHalfRow",   $secondHalfHours);
+            $activeSheet->setCellValue("I$secondHalfRow",   $secondHalfMinutes);
 
             // event per kinsesa
             $activeSheet->setCellValue("D$cellStart", implode("\n", $firstHalfEvents));

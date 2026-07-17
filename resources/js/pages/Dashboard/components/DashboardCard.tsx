@@ -3,9 +3,12 @@ import { Clock10, TrendingUp } from 'lucide-react';
 
 type DashboardProp = {
     hours: number;
+    content: {
+        total_leaves: number;
+    };
 };
 
-export default function DashboardCard() {
+export default function DashboardCard({ content }: DashboardProp) {
     return (
         <Card className="card-primary group">
             {/* Glass glow */}
@@ -24,7 +27,7 @@ export default function DashboardCard() {
             <CardContent className="relative space-y-3">
                 <div>
                     <p className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-                        412
+                        {content.total_leaves}
                     </p>
 
                     <p className="text-sm text-slate-500">hours this month</p>

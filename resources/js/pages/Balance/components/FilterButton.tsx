@@ -40,6 +40,8 @@ const YEARS = Array.from({ length: 5 }, (_, i) => {
     return { label: String(year), value: String(year) };
 });
 
+console.log(YEARS);
+
 export default function FilterButton({
     month,
     year,

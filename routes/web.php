@@ -21,7 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get("balance/create", [BalanceController::class, 'store'])->name('balance.store');
     Route::get('/balances/user/{user}', [BalanceController::class, 'show'])->name('balance.show');
     Route::get('/balances/user/{user}/data', [BalanceController::class, 'data'])->name('balance.data');
-    Route::delete('/balances/delete', [BalanceController::class, 'destroy'])->name('balance.destroy');
+    Route::delete('/balances/{leave}/delete', [BalanceController::class, 'destroy'])->name('balance.destroy');
     Route::put("/balance/{leave}/update", [BalanceController::class, 'update'])->name('balance.update');
 
     // balance users status

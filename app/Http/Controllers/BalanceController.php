@@ -127,13 +127,13 @@ class BalanceController extends Controller
         );
     }
 
-    public function data(User $user, ReplayBalanceAction $action)
+    public function data(User $user, ReplayBalanceAction $action, ReplayAllUserBalance $userBalance)
     {
         $month = request()->input('month', now()->month);
         $year  = request()->input('year', now()->year);
         $date  = Carbon::create((int) $year, (int) $month, 1)->startOfMonth();
 
-        $replayBalances = $action->replayUserBalance($date, $user);
+        $replayBalances = $userBalance->allTransactions($date, $user);
         $hasNextAccrual = Leave::hasNextMonthAccrual($user, $date);
         $transactions   = Leave::transactionPerMonth($user, $date);
 

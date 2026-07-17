@@ -10,6 +10,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $month = request()->input('month', now()->month);
+        $year = request()->input('year', now()->year);
+
         $allLeaveTypes = Leave::whereIn('leave_type', [
             'vacation leave',
             'sick leave',
@@ -22,7 +25,8 @@ class DashboardController extends Controller
             ->count();
 
         return Inertia::render('Dashboard/dashboard', [
-            'total_leaves' => $allLeaveTypes
+            'total_leaves' => $allLeaveTypes,
+            'filters' => ['month' => $month, 'year' => $year]
         ]);
     }
 }

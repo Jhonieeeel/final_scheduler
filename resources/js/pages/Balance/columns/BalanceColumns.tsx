@@ -6,6 +6,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Spinner } from '@/components/ui/spinner';
 import balance from '@/routes/balance';
 import { useForm } from '@inertiajs/react';
 import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
@@ -30,6 +31,7 @@ import {
     Calendar,
     MoreHorizontal,
     Icon,
+    Trash,
 } from 'lucide-react';
 
 export type BalanceProps = {
@@ -180,7 +182,7 @@ export const BalanceColumns: ColumnDef<BalanceProps>[] = [
             const leave = row.original;
 
             const leaveForm = useForm({
-                id: 0,
+                id: leave.id,
             });
 
             const queryClient = useQueryClient();
@@ -188,9 +190,11 @@ export const BalanceColumns: ColumnDef<BalanceProps>[] = [
             function handleDelete(e: React.MouseEvent) {
                 e.preventDefault();
 
-                leaveForm.submit(balance.destroy(leave), {
+                leaveForm.submit(balance.destroy(leaveForm.data.id), {
                     onSuccess: () => {
-                        console.log('Deleted');
+                        queryClient.invalidateQueries({
+                            queryKey: ['balances'],
+                        });
                     },
                 });
             }
@@ -206,13 +210,10 @@ export const BalanceColumns: ColumnDef<BalanceProps>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem onClick={handleDelete}>
-                            Copy payment ID
+                            {leaveForm.processing ? <Spinner /> : <Trash />}
+                            {leaveForm.processing ? 'Deleting..' : 'Delete'}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>
-                            View payment details
-                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );
